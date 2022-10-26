@@ -18,6 +18,23 @@ struct Tveiculo{
         string placa;
 };
 
+void ordena_funcao(struct Tveiculo *bd[]){
+    Tveiculo *bd2[50];
+    Tveiculo *aux;
+    int j = 0;
+    bd2[0] = bd[0];
+    for(int i = 0; i < 32; i++){
+        if(bd[i + 1]->placa < bd2[i]-> placa){
+            for(j = i - 1; bd[i] -> placa < bd2[j] -> placa && j >= 0;j--){
+                bd2[j+1] = bd2[j];
+            }
+            bd2[j+1] = bd[i];
+        }else{
+
+        }
+    }
+}
+
 int insercao_veiculo(struct Tveiculo *p[], struct Tveiculo *novo, int *Tam){
 	if(*Tam < 50){
 		p[*Tam] = novo;
