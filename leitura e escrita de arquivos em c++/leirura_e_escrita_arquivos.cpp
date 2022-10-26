@@ -16,21 +16,28 @@ struct Tveiculo{
         string cor;
         int porta;
         string placa;
+        float valor;
 };
 
-void ordena_funcao(struct Tveiculo *bd[]){
+void ordena_funcao(struct Tveiculo *bd[],int *tam){
     Tveiculo *bd2[50];
-    Tveiculo *aux;
     int j = 0;
+    bd2[0] = new Tveiculo;
     bd2[0] = bd[0];
-    for(int i = 0; i < 32; i++){
-        if(bd[i + 1]->placa < bd2[i]-> placa){
+    for(int i = 1; i < *tam; i++){
+        bd2[i]=new Tveiculo;
+        if(bd[i]->placa < bd2[i-1]-> placa){
             for(j = i - 1; bd[i] -> placa < bd2[j] -> placa && j >= 0;j--){
                 bd2[j+1] = bd2[j];
-            }
-            bd2[j+1] = bd[i];
-        }else{
 
+                if(j==0){
+                    j--;
+                    break;
+                }
+            }
+            bd2[j + 1] = bd[i];
+        }else{
+            bd2[i]=bd[i];
         }
     }
 }
@@ -72,7 +79,7 @@ int main(){
     int i = 0;
     ifstream myfile ("BD_veiculos.txt");
     if (myfile.is_open() ) {
-        while ( !myfile.eof() ) {
+        while (!myfile.eof()) {
             bd[i]=new Tveiculo;
             myfile >> bd[i]->modelo;
             myfile >> bd[i]->marca;
@@ -86,6 +93,7 @@ int main(){
             myfile >> bd[i]->cor;
             myfile >> bd[i]->porta;
             myfile >> bd[i]->placa;
+            myfile >> bd[i]->valor;
             i++;
         }
         myfile.close();
@@ -123,7 +131,8 @@ int main(){
 				cout << bd[j]->direcao << " ";
 				cout << bd[j]->cor << " ";
 				cout << bd[j]->porta << " ";
-				cout << bd[j]->placa;
+				cout << bd[j]->placa << " ";
+                cout << bd[j]->valor;
 				cout << endl;
 			}
 		Tveiculo *inserir;
@@ -166,10 +175,27 @@ int main(){
 				cout << bd[j]->direcao << " ";
 				cout << bd[j]->cor << " ";
 				cout << bd[j]->porta << " ";
-				cout << bd[j]->placa;
+				cout << bd[j]->placa << " ";
+                cout << bd[j]->valor;
 				cout << endl;
 			}
-			scanf("%d");
+            ordena_funcao(bd, &i);
+            for(int j = 0; j < i; j++){
+				cout << bd[j]->modelo << " ";
+				cout << bd[j]->marca << " ";
+				cout << bd[j]->tipo << " ";
+				cout << bd[j]->ano << " ";
+				cout << bd[j]->km << " ";
+				cout << bd[j]->potencia << " ";
+				cout << bd[j]->combustivel << " ";
+				cout << bd[j]->cambio << " ";
+				cout << bd[j]->direcao << " ";
+				cout << bd[j]->cor << " ";
+				cout << bd[j]->porta << " ";
+				cout << bd[j]->placa << " ";
+                cout << bd[j]->valor;
+				cout << endl;
+            }
 		}else{
 			cout << "Unable to open file\n";
 		}
