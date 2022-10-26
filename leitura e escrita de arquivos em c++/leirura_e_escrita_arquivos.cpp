@@ -19,12 +19,12 @@ struct Tveiculo{
         float valor;
 };
 
-void ordena_funcao(struct Tveiculo *bd[],int *tam){
+void ordena_funcao(struct Tveiculo *bd[]){
     Tveiculo *bd2[50];
     int j = 0;
     bd2[0] = new Tveiculo;
     bd2[0] = bd[0];
-    for(int i = 1; i < *tam; i++){
+    for(int i = 1; bd[i]!=NULL; i++){
         bd2[i]=new Tveiculo;
         if(bd[i]->placa < bd2[i-1]-> placa){
             for(j = i - 1; bd[i] -> placa < bd2[j] -> placa && j >= 0;j--){
@@ -40,6 +40,23 @@ void ordena_funcao(struct Tveiculo *bd[],int *tam){
             bd2[i]=bd[i];
         }
     }
+    cout << endl << endl << endl;
+            for(int j = 0; bd[j]!=NULL; j++){
+				cout << bd2[j]->modelo << " ";
+				cout << bd2[j]->marca << " ";
+				cout << bd2[j]->tipo << " ";
+				cout << bd2[j]->ano << " ";
+				cout << bd2[j]->km << " ";
+				cout << bd2[j]->potencia << " ";
+				cout << bd2[j]->combustivel << " ";
+				cout << bd2[j]->cambio << " ";
+				cout << bd2[j]->direcao << " ";
+				cout << bd2[j]->cor << " ";
+				cout << bd2[j]->porta << " ";
+				cout << bd2[j]->placa << " ";
+                cout << bd2[j]->valor;
+				cout << endl;
+            }
 }
 
 int insercao_veiculo(struct Tveiculo *p[], struct Tveiculo *novo, int *Tam){
@@ -65,8 +82,11 @@ int busca_e_remocao_de_veiculo(struct Tveiculo *p[],string placa, int *tam){
             return 0;
         }else{
             for(int j = i; j < *tam;j++){
-                p[j] = p[j+1];
-				
+                if(j < *tam - 1){
+                    p[j] = p[j+1];
+                }else{
+                    p[j] = NULL;
+                }
             }
             *tam = *tam - 1;
             return 1;
@@ -151,6 +171,7 @@ int main(){
             myfile >> inserir->cor;
             myfile >> inserir->porta;
             myfile >> inserir->placa;
+            myfile >> inserir->valor;
 			switch(insercao_veiculo(bd, inserir, &i)){
 				case -1:
 					cout << endl << "Cheio!" << endl << endl;
@@ -179,31 +200,14 @@ int main(){
                 cout << bd[j]->valor;
 				cout << endl;
 			}
-            ordena_funcao(bd, &i);
-            for(int j = 0; j < i; j++){
-				cout << bd[j]->modelo << " ";
-				cout << bd[j]->marca << " ";
-				cout << bd[j]->tipo << " ";
-				cout << bd[j]->ano << " ";
-				cout << bd[j]->km << " ";
-				cout << bd[j]->potencia << " ";
-				cout << bd[j]->combustivel << " ";
-				cout << bd[j]->cambio << " ";
-				cout << bd[j]->direcao << " ";
-				cout << bd[j]->cor << " ";
-				cout << bd[j]->porta << " ";
-				cout << bd[j]->placa << " ";
-                cout << bd[j]->valor;
-				cout << endl;
-            }
+            ordena_funcao(bd);
 		}else{
 			cout << "Unable to open file\n";
 		}
-		for(int j = 0; j < i;j++){
+        for(int j = 0; j < 50; j++){
             delete (bd[j]);
-		}
-		delete (inserir);
-	}
+	    }
+    }
     else{
         cout << "Unable to open file\n";    
 	}
