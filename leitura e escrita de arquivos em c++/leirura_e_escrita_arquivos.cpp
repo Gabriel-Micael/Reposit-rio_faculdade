@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <math.h>
 
 using namespace std;
 
@@ -93,7 +94,7 @@ int busca_e_remocao_de_veiculo(struct Tveiculo *p[],string placa, int *tam){
 }
 
 //FUNÇÃO QUE VAI TENTAR MOSTRAR OS 10 VEÍCULOS COM PREÇOS MAIS PRÓXIMO DO VALOR INSERIDO
-int busca_por_preco(struct Tveiculo *bd[], float preco, int *tam){
+/*int busca_por_preco(struct Tveiculo *bd[], float preco, int *tam){
     Tveiculo *bd2[*tam];
     //GARANTINDO QUE O VETOR SECUNDÁRIO SEJA NULO
     for(int j = 0; j < *tam; j++){
@@ -208,7 +209,7 @@ int busca_por_preco(struct Tveiculo *bd[], float preco, int *tam){
             }
         }
     }
-}
+}*/
 
 //FUNÇÃO PARA IMPRIMIR O VETOR DE STRUCT NA TELA
 void mostrar(struct Tveiculo *bd[],int *tam){
@@ -226,6 +227,39 @@ void mostrar(struct Tveiculo *bd[],int *tam){
         cout << bd[i]->porta << " ";
         cout << bd[i]->placa << " ";
         cout << bd[i]->valor << endl;
+    }
+}
+
+int busca_por_preco(struct Tveiculo *bd[], float preco, int *tam){
+    Tveiculo *bd2[10];
+    for(int i = 0; i < *tam; i++){
+        for(int j = 0; j < 10; j++){
+            if(i<10){
+                bd2[j] = bd[j];
+            }else{
+                if(sqrt(pow(bd[i]->valor - preco,2)) < sqrt(pow(bd2[j]->valor - preco,2))){
+                    bd[j]=bd[i];
+                    i++;
+                }
+            }
+        }
+    }
+    cout << endl << "OS 10 VALORES MAIS PRÓXIMOS DO INFORMADO" << endl;
+    for(int i = 0; i < 10; i++){
+        cout << i + 1 << "º CARRO MAIS PRÓXIMO DO VALOR: ";
+        cout << bd2[i]->modelo << " ";
+        cout << bd2[i]->marca << " ";
+        cout << bd2[i]->tipo << " ";
+        cout << bd2[i]->ano << " ";
+        cout << bd2[i]->km << " ";
+        cout << bd2[i]->potencia << " ";
+        cout << bd2[i]->combustivel << " ";
+        cout << bd2[i]->cambio << " ";
+        cout << bd2[i]->direcao << " ";
+        cout << bd2[i]->cor << " ";
+        cout << bd2[i]->porta << " ";
+        cout << bd2[i]->placa << " ";
+        cout << bd2[i]->valor << endl;
     }
 }
 
