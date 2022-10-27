@@ -21,7 +21,12 @@ struct Tveiculo{
 };
 
 //FUNÇÃO QUE ORDENARÁ O VETOR DE LEITURA DO ARQUIVO EM ORDEM ALFANUMÉRICA DA PLACA
-void ordena_por_placa(struct Tveiculo *bd[], struct Tveiculo *bd2[], int *tam){
+void ordena_por_placa(struct Tveiculo *bd[], int *tam){
+    Tveiculo *bd2[*tam];
+    //GARANTINDO QUE O VETOR SECUNDÁRIO SEJA NULO
+    for(int j = 0; j < *tam; j++){
+        bd2[j] = NULL;
+    }
     int j = 0;
     bd2[0] = new Tveiculo;
     bd2[0] = bd[0];
@@ -68,7 +73,7 @@ int busca_e_remocao_de_veiculo(struct Tveiculo *p[],string placa, int *tam){
         if(i==*tam){
             return -1;
         }else{
-            cout << "ELEMENTO ENCONTRADO. DESEJA REMOVÊ-LO? ( 1 - SIM, 0 - NÃO) ";
+            cout << "Elemento encontrado. Deseja removê-lo? ( 1 - sim, 0 - não) ";
             cin >> opc;
             if(opc == 0){
                 return 0;
@@ -88,8 +93,121 @@ int busca_e_remocao_de_veiculo(struct Tveiculo *p[],string placa, int *tam){
 }
 
 //FUNÇÃO QUE VAI TENTAR MOSTRAR OS 10 VEÍCULOS COM PREÇOS MAIS PRÓXIMO DO VALOR INSERIDO
-int busca_por_preco(struct Tveiculo *bd[], float preco){
-
+int busca_por_preco(struct Tveiculo *bd[], float preco, int *tam){
+    Tveiculo *bd2[*tam];
+    //GARANTINDO QUE O VETOR SECUNDÁRIO SEJA NULO
+    for(int j = 0; j < *tam; j++){
+        bd2[j] = NULL;
+    }
+    int j = 0;
+    bd2[0] = new Tveiculo;
+    bd2[0] = bd[0];
+    for(int i = 1; i < *tam; i++){
+        bd2[i]=new Tveiculo;
+        if(bd[i]->valor < bd2[i-1]-> valor){
+            for(j = i - 1; bd[i] -> valor < bd2[j] -> valor && j >= 0;j--){         
+                bd2[j+1] = bd2[j];
+                if(j==0){
+                    j--;
+                    break;
+                }
+            }
+            bd2[j + 1] = bd[i];
+        }else{
+            bd2[i]=bd[i];
+        }
+    }
+    cout << endl << "OS 10 CARROS MAIS PRÓXIMOS DO VALOR INFORMADO SÃO: " << endl << endl;
+    int i;
+    for(i = 0; i < *tam && preco > bd2[i]->valor; i++){
+    }
+    if(i == 0){
+        for(j = 0; j < 10; j++){
+            cout << j + 1 << "º CARRO MAIS PRÓXIMO DO VALOR: ";
+            cout << bd2[j]->modelo << " ";
+            cout << bd2[j]->marca << " ";
+            cout << bd2[j]->tipo << " ";
+            cout << bd2[j]->ano << " ";
+            cout << bd2[j]->km << " ";
+            cout << bd2[j]->potencia << " ";
+            cout << bd2[j]->combustivel << " ";
+            cout << bd2[j]->cambio << " ";
+            cout << bd2[j]->direcao << " ";
+            cout << bd2[j]->cor << " ";
+            cout << bd2[j]->porta << " ";
+            cout << bd2[j]->placa << " ";
+            cout << bd2[j]->valor << endl;
+        }
+    }else if(i == *tam){
+        int k = 0;
+        for(j = *tam-1; j > *tam - 11; j--, k++){
+            cout << k + 1 << "º CARRO MAIS PRÓXIMO DO VALOR: ";
+            cout << bd2[j]->modelo << " ";
+            cout << bd2[j]->marca << " ";
+            cout << bd2[j]->tipo << " ";
+            cout << bd2[j]->ano << " ";
+            cout << bd2[j]->km << " ";
+            cout << bd2[j]->potencia << " ";
+            cout << bd2[j]->combustivel << " ";
+            cout << bd2[j]->cambio << " ";
+            cout << bd2[j]->direcao << " ";
+            cout << bd2[j]->cor << " ";
+            cout << bd2[j]->porta << " ";
+            cout << bd2[j]->placa << " ";
+            cout << bd2[j]->valor << endl;
+        }
+    }else{
+        j = 0;
+        cout << j + 1 << "º CARRO MAIS PRÓXIMO DO VALOR: ";
+        cout << bd2[i]->modelo << " ";
+        cout << bd2[i]->marca << " ";
+        cout << bd2[i]->tipo << " ";
+        cout << bd2[i]->ano << " ";
+        cout << bd2[i]->km << " ";
+        cout << bd2[i]->potencia << " ";
+        cout << bd2[i]->combustivel << " ";
+        cout << bd2[i]->cambio << " ";
+        cout << bd2[i]->direcao << " ";
+        cout << bd2[i]->cor << " ";
+        cout << bd2[i]->porta << " ";
+        cout << bd2[i]->placa << " ";
+        cout << bd2[i]->valor << endl;
+        for(int j = 2, e = i - 1, d = i + 1; j < 10; j++){
+            if((bd2[i]->valor-bd2[e]->valor)<(bd2[d]->valor-bd2[i]->valor) && e>=0){
+                cout << j << "º CARRO MAIS PRÓXIMO DO VALOR: ";
+                cout << bd2[e]->modelo << " ";
+                cout << bd2[e]->marca << " ";
+                cout << bd2[e]->tipo << " ";
+                cout << bd2[e]->ano << " ";
+                cout << bd2[e]->km << " ";
+                cout << bd2[e]->potencia << " ";
+                cout << bd2[e]->combustivel << " ";
+                cout << bd2[e]->cambio << " ";
+                cout << bd2[e]->direcao << " ";
+                cout << bd2[e]->cor << " ";
+                cout << bd2[e]->porta << " ";
+                cout << bd2[e]->placa << " ";
+                cout << bd2[e]->valor << endl;
+                e--;
+            }else if(d < *tam){
+                cout << j + 1 << "º CARRO MAIS PRÓXIMO DO VALOR: ";
+                cout << bd2[d]->modelo << " ";
+                cout << bd2[d]->marca << " ";
+                cout << bd2[d]->tipo << " ";
+                cout << bd2[d]->ano << " ";
+                cout << bd2[d]->km << " ";
+                cout << bd2[d]->potencia << " ";
+                cout << bd2[d]->combustivel << " ";
+                cout << bd2[d]->cambio << " ";
+                cout << bd2[d]->direcao << " ";
+                cout << bd2[d]->cor << " ";
+                cout << bd2[d]->porta << " ";
+                cout << bd2[d]->placa << " ";
+                cout << bd2[d]->valor << endl;
+                d++;
+            }
+        }
+    }
 }
 
 //FUNÇÃO PARA IMPRIMIR O VETOR DE STRUCT NA TELA
@@ -113,23 +231,35 @@ void mostrar(struct Tveiculo *bd[],int *tam){
 
 //FUNÇÃO PARA SALVAR OS DADOS NO ARQUIVO TEXTO
 void salvar(struct Tveiculo *p[], int *tam){
-    ofstream myfile ("BD_veiculos.txt");
-    if(myfile.is_open()){
-        for(int i = 0; i < *tam; i++){
-            if(i < *tam - 1){
-                myfile << p[i]->modelo << " " << p[i]->marca << " " << p[i]->tipo << " " << p[i]->ano << " " << p[i]->km 
-                << " " << p[i]->potencia << " " << p[i]->combustivel << " " << p[i]->cambio<< " " << p[i]->direcao<< " " 
-                << p[i]->cor<< " " << p[i]->porta<< " " << p[i]->placa<< " " << p[i]->valor << "\n";
+    int opc;
+    do{
+        cout << "[1] - SALVAR" << endl << "[2] - NÃO SALVAR" << endl << endl << "ESCOLHA UMA OPÇÃO: ";
+        cin >> opc;
+        if(opc == 1){
+            ofstream myfile ("BD_veiculos.txt");
+            if(myfile.is_open()){
+                for(int i = 0; i < *tam; i++){
+                    if(i < *tam - 1){
+                        myfile << p[i]->modelo << " " << p[i]->marca << " " << p[i]->tipo << " " << p[i]->ano << " " << p[i]->km 
+                        << " " << p[i]->potencia << " " << p[i]->combustivel << " " << p[i]->cambio<< " " << p[i]->direcao<< " " 
+                        << p[i]->cor<< " " << p[i]->porta<< " " << p[i]->placa<< " " << p[i]->valor << "\n";
+                    }else{
+                        myfile << p[i]->modelo << " " << p[i]->marca << " " << p[i]->tipo << " " << p[i]->ano << " " << p[i]->km 
+                        << " " << p[i]->potencia << " " << p[i]->combustivel << " " << p[i]->cambio<< " " << p[i]->direcao<< " " 
+                        << p[i]->cor<< " " << p[i]->porta<< " " << p[i]->placa<< " " << p[i]->valor;
+                    }
+                }
+                myfile.close();
             }else{
-                myfile << p[i]->modelo << " " << p[i]->marca << " " << p[i]->tipo << " " << p[i]->ano << " " << p[i]->km 
-                << " " << p[i]->potencia << " " << p[i]->combustivel << " " << p[i]->cambio<< " " << p[i]->direcao<< " " 
-                << p[i]->cor<< " " << p[i]->porta<< " " << p[i]->placa<< " " << p[i]->valor;
+                cout <<"Unable to open file\n" << endl;
             }
+        }else if(opc == 2){
+        }else{
+            cout << endl << "DIGITE APENAS '1' OU '2'!" << endl;
         }
-    }else{
-        cout <<"Unable to open file\n" << endl;
-    }
+    }while(opc != 1 && opc != 2);
 }
+
 
 int main(){
     Tveiculo *bd[50];
@@ -194,7 +324,7 @@ int main(){
         }
         do{
             //MENU
-            cout << "--------------------------------------------------------------" << endl << "[0] - SAIR E SALVAR" << endl << "[1] - BUSCA POR PLACA" << endl 
+            cout << "--------------------------------------------------------------" << endl << "[0] - SAIR" << endl << "[1] - BUSCA POR PLACA" << endl 
             << "[2] - BUSCA POR PREÇO" << endl << "[3] - ORDENAR PELA PLACA" << endl << "[4] - MOSTRAR" << endl << "[5] - INSERIR" <<  endl
             << "--------------------------------------------------------------" << endl << "ESCOLHA UMA OPÇÃO: ";
             cin >> opc;
@@ -202,7 +332,6 @@ int main(){
             switch(opc){
                 case 0:
                     salvar(bd, &i);
-                    cout << "DADOS SALVOS E PROGRAMA ENCERRADO" << endl << endl;
                     break;
                 case 1:
                     cout <<  "DIGITE A PLACA DO VEÍCULO A PROCURAR, NO MODELO AAA0000: ";
@@ -214,10 +343,10 @@ int main(){
                 case 2:
                     cout << "DIGITE O PREÇO DO VEÍCULO A PROCURAR: ";
 		            cin >> preco;
-                    busca_por_preco(bd, preco);
+                    busca_por_preco(bd, preco, &i);
                     break;
                 case 3:
-                    ordena_por_placa(bd, bd2, &i);
+                    ordena_por_placa(bd, &i);
                     cout <<  "ORDENADO! " << endl;
                     break;
                 case 4:
