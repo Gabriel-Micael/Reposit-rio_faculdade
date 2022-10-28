@@ -1,6 +1,5 @@
 #include <iostream>
 #include <fstream>
-#include <math.h>
 
 using namespace std;
 
@@ -25,15 +24,8 @@ struct Tveiculo{
 void ordena_por_placa(struct Tveiculo *bd[], int *tam){
     Tveiculo *bd2[*tam];
     //GARANTINDO QUE O VETOR SECUNDÁRIO SEJA NULO
-    for(int j = 0; j < *tam; j++){
-        bd2[j] = NULL;
-    }
-    int j = 0;
-    bd2[0] = new Tveiculo;
     bd2[0] = bd[0];
-    for(int i = 1; i < *tam; i++){
-        bd2[i]=new Tveiculo;
-        if(bd[i]->placa < bd2[i-1]-> placa){
+    for(int i = 1, j = 0; i < *tam; i++){
             for(j = i - 1; bd[i] -> placa < bd2[j] -> placa && j >= 0;j--){         
                 bd2[j+1] = bd2[j];
                 if(j==0){
@@ -42,9 +34,6 @@ void ordena_por_placa(struct Tveiculo *bd[], int *tam){
                 }
             }
             bd2[j + 1] = bd[i];
-        }else{
-            bd2[i]=bd[i];
-        }
     }
     //TRANSEFINDO O VETOR ORDENADO PARA O VETOR DE LEITURA PRINCIPAL
     for(int i = 0; i < *tam; i++){
@@ -74,7 +63,7 @@ int busca_e_remocao_de_veiculo(struct Tveiculo *p[],string placa, int *tam){
         if(i==*tam){
             return -1;
         }else{
-            cout << "Elemento encontrado. Deseja removê-lo? ( 1 - sim, 0 - não) ";
+            cout << "ELEMENTO ENCONTRADO. DESEJA REMOVÊ-LO? ( 1 - SIM, 0 - NÃO) ";
             cin >> opc;
             if(opc == 0){
                 return 0;
@@ -92,124 +81,6 @@ int busca_e_remocao_de_veiculo(struct Tveiculo *p[],string placa, int *tam){
         }
     }
 }
-
-//FUNÇÃO QUE VAI TENTAR MOSTRAR OS 10 VEÍCULOS COM PREÇOS MAIS PRÓXIMO DO VALOR INSERIDO
-/*int busca_por_preco(struct Tveiculo *bd[], float preco, int *tam){
-    Tveiculo *bd2[*tam];
-    //GARANTINDO QUE O VETOR SECUNDÁRIO SEJA NULO
-    for(int j = 0; j < *tam; j++){
-        bd2[j] = NULL;
-    }
-    int j = 0;
-    bd2[0] = new Tveiculo;
-    bd2[0] = bd[0];
-    for(int i = 1; i < *tam; i++){
-        bd2[i]=new Tveiculo;
-        if(bd[i]->valor < bd2[i-1]-> valor){
-            for(j = i - 1; bd[i] -> valor < bd2[j] -> valor && j >= 0;j--){         
-                bd2[j+1] = bd2[j];
-                if(j==0){
-                    j--;
-                    break;
-                }
-            }
-            bd2[j + 1] = bd[i];
-        }else{
-            bd2[i]=bd[i];
-        }
-    }
-    cout << endl << "OS 10 CARROS MAIS PRÓXIMOS DO VALOR INFORMADO SÃO: " << endl << endl;
-    int i;
-    for(i = 0; i < *tam && preco > bd2[i]->valor; i++){
-    }
-    if(i == 0){
-        for(j = 0; j < 10; j++){
-            cout << j + 1 << "º CARRO MAIS PRÓXIMO DO VALOR: ";
-            cout << bd2[j]->modelo << " ";
-            cout << bd2[j]->marca << " ";
-            cout << bd2[j]->tipo << " ";
-            cout << bd2[j]->ano << " ";
-            cout << bd2[j]->km << " ";
-            cout << bd2[j]->potencia << " ";
-            cout << bd2[j]->combustivel << " ";
-            cout << bd2[j]->cambio << " ";
-            cout << bd2[j]->direcao << " ";
-            cout << bd2[j]->cor << " ";
-            cout << bd2[j]->porta << " ";
-            cout << bd2[j]->placa << " ";
-            cout << bd2[j]->valor << endl;
-        }
-    }else if(i == *tam){
-        int k = 0;
-        for(j = *tam-1; j > *tam - 11; j--, k++){
-            cout << k + 1 << "º CARRO MAIS PRÓXIMO DO VALOR: ";
-            cout << bd2[j]->modelo << " ";
-            cout << bd2[j]->marca << " ";
-            cout << bd2[j]->tipo << " ";
-            cout << bd2[j]->ano << " ";
-            cout << bd2[j]->km << " ";
-            cout << bd2[j]->potencia << " ";
-            cout << bd2[j]->combustivel << " ";
-            cout << bd2[j]->cambio << " ";
-            cout << bd2[j]->direcao << " ";
-            cout << bd2[j]->cor << " ";
-            cout << bd2[j]->porta << " ";
-            cout << bd2[j]->placa << " ";
-            cout << bd2[j]->valor << endl;
-        }
-    }else{
-        j = 0;
-        cout << j + 1 << "º CARRO MAIS PRÓXIMO DO VALOR: ";
-        cout << bd2[i]->modelo << " ";
-        cout << bd2[i]->marca << " ";
-        cout << bd2[i]->tipo << " ";
-        cout << bd2[i]->ano << " ";
-        cout << bd2[i]->km << " ";
-        cout << bd2[i]->potencia << " ";
-        cout << bd2[i]->combustivel << " ";
-        cout << bd2[i]->cambio << " ";
-        cout << bd2[i]->direcao << " ";
-        cout << bd2[i]->cor << " ";
-        cout << bd2[i]->porta << " ";
-        cout << bd2[i]->placa << " ";
-        cout << bd2[i]->valor << endl;
-        for(int j = 2, e = i - 1, d = i + 1; j < 10; j++){
-            if((bd2[i]->valor-bd2[e]->valor)<(bd2[d]->valor-bd2[i]->valor) && e>=0){
-                cout << j << "º CARRO MAIS PRÓXIMO DO VALOR: ";
-                cout << bd2[e]->modelo << " ";
-                cout << bd2[e]->marca << " ";
-                cout << bd2[e]->tipo << " ";
-                cout << bd2[e]->ano << " ";
-                cout << bd2[e]->km << " ";
-                cout << bd2[e]->potencia << " ";
-                cout << bd2[e]->combustivel << " ";
-                cout << bd2[e]->cambio << " ";
-                cout << bd2[e]->direcao << " ";
-                cout << bd2[e]->cor << " ";
-                cout << bd2[e]->porta << " ";
-                cout << bd2[e]->placa << " ";
-                cout << bd2[e]->valor << endl;
-                e--;
-            }else if(d < *tam){
-                cout << j + 1 << "º CARRO MAIS PRÓXIMO DO VALOR: ";
-                cout << bd2[d]->modelo << " ";
-                cout << bd2[d]->marca << " ";
-                cout << bd2[d]->tipo << " ";
-                cout << bd2[d]->ano << " ";
-                cout << bd2[d]->km << " ";
-                cout << bd2[d]->potencia << " ";
-                cout << bd2[d]->combustivel << " ";
-                cout << bd2[d]->cambio << " ";
-                cout << bd2[d]->direcao << " ";
-                cout << bd2[d]->cor << " ";
-                cout << bd2[d]->porta << " ";
-                cout << bd2[d]->placa << " ";
-                cout << bd2[d]->valor << endl;
-                d++;
-            }
-        }
-    }
-}*/
 
 //FUNÇÃO PARA IMPRIMIR O VETOR DE STRUCT NA TELA
 void mostrar(struct Tveiculo *bd[],int *tam){
@@ -230,37 +101,47 @@ void mostrar(struct Tveiculo *bd[],int *tam){
     }
 }
 
+//FUNÇÃO QUE VAI TENTAR MOSTRAR OS 10 VEÍCULOS COM PREÇOS MAIS PRÓXIMO DO VALOR INSERIDO
 int busca_por_preco(struct Tveiculo *bd[], float preco, int *tam){
-    Tveiculo *bd2[10];
-    for(int i = 0; i < *tam; i++){
-        for(int j = 0; j < 10; j++){
-            if(i<10){
-                bd2[j] = bd[j];
-            }else{
-                if(sqrt(pow(bd[i]->valor - preco,2)) < sqrt(pow(bd2[j]->valor - preco,2))){
-                    bd[j]=bd[i];
-                    i++;
+    Tveiculo *bd2[*tam], *bd3[10];
+    //ORDENANDO EM ORDEM CRESCENTE DE PREÇO
+    int j = 0, i, k = 0;
+    bd2[0] = bd[0];
+    for(i = 1; i < *tam; i++){
+            for(j = i - 1; bd[i] -> valor < bd2[j] -> valor && j >= 0;j--){         
+                bd2[j+1] = bd2[j];
+                if(j==0){
+                    j--;
+                    break;
                 }
             }
+            bd2[j + 1] = bd[i];
+    }
+    for(i = 0; i < *tam && preco > bd2[i]->valor; i++){
+    }
+    bd3[0]=bd2[i];
+    k = 1;
+    for(int e = i - 1, d = i + 1; k < 10; k++){
+        if(e>=0){
+            if(d < *tam){
+                if((preco-bd2[e]->valor)<(bd2[d]->valor-preco)){
+                    bd3[k]=bd2[e];
+                    e--;
+                }else if(d < *tam){
+                    bd3[k]=bd2[d];
+                    d++;
+                }
+            }else{
+                bd3[k]=bd2[e];
+                e--;
+            }
+        }else if(d < *tam){
+            bd3[k]=bd2[d];
+            d++;
         }
     }
-    cout << endl << "OS 10 VALORES MAIS PRÓXIMOS DO INFORMADO" << endl;
-    for(int i = 0; i < 10; i++){
-        cout << i + 1 << "º CARRO MAIS PRÓXIMO DO VALOR: ";
-        cout << bd2[i]->modelo << " ";
-        cout << bd2[i]->marca << " ";
-        cout << bd2[i]->tipo << " ";
-        cout << bd2[i]->ano << " ";
-        cout << bd2[i]->km << " ";
-        cout << bd2[i]->potencia << " ";
-        cout << bd2[i]->combustivel << " ";
-        cout << bd2[i]->cambio << " ";
-        cout << bd2[i]->direcao << " ";
-        cout << bd2[i]->cor << " ";
-        cout << bd2[i]->porta << " ";
-        cout << bd2[i]->placa << " ";
-        cout << bd2[i]->valor << endl;
-    }
+    cout << endl << "OS 10 ELEMENTOS MAIS PROXIMOS!" << endl << endl;
+    mostrar(bd3,&k);
 }
 
 //FUNÇÃO PARA SALVAR OS DADOS NO ARQUIVO TEXTO
@@ -330,28 +211,26 @@ int main(){
         float preco;
         //VARIAVEL USADA PARA RECEBER A PLACA DO VEÍCULO
         string placa;
-        Tveiculo *inserir, *bd2[50];
-        //GARANTINDO QUE O VETOR SECUNDÁRIO SEJA NULO
-        for(int j = 0; j < 50; j++){
-            bd2[j] = NULL;
-        }
+        Tveiculo *inserir;
         //LEITURA DE ARQUIVO SIMULANDO ENTRADA DE USUÁRIO
         ifstream myfile ("veiculo_novo.txt");
         if(myfile.is_open()){
-            inserir=new Tveiculo;
-            myfile >> inserir->modelo;
-            myfile >> inserir->marca;
-            myfile >> inserir->tipo;
-            myfile >> inserir->ano;
-            myfile >> inserir->km;
-            myfile >> inserir->potencia;
-            myfile >> inserir->combustivel;
-            myfile >> inserir->cambio;
-            myfile >> inserir->direcao;
-            myfile >> inserir->cor;
-            myfile >> inserir->porta;
-            myfile >> inserir->placa;
-            myfile >> inserir->valor;
+            while(!myfile.eof()){
+                inserir=new Tveiculo;
+                myfile >> inserir->modelo;
+                myfile >> inserir->marca;
+                myfile >> inserir->tipo;
+                myfile >> inserir->ano;
+                myfile >> inserir->km;
+                myfile >> inserir->potencia;
+                myfile >> inserir->combustivel;
+                myfile >> inserir->cambio;
+                myfile >> inserir->direcao;
+                myfile >> inserir->cor;
+                myfile >> inserir->porta;
+                myfile >> inserir->placa;
+                myfile >> inserir->valor;
+            }
             myfile.close();
         }else{
             cout << "Unable to open file\n";
@@ -362,7 +241,6 @@ int main(){
             << "[2] - BUSCA POR PREÇO" << endl << "[3] - ORDENAR PELA PLACA" << endl << "[4] - MOSTRAR" << endl << "[5] - INSERIR" <<  endl
             << "--------------------------------------------------------------" << endl << "ESCOLHA UMA OPÇÃO: ";
             cin >> opc;
-            cout << endl;
             switch(opc){
                 case 0:
                     salvar(bd, &i);
@@ -395,9 +273,9 @@ int main(){
                     break;
             }
         }while(opc != 0);
+    //LIBERANDO MEMÓRIA USADA
     for(int j = 0; j < i;j++){
         delete (bd[j]);
-        delete (bd2[j]);
     }
     }else{
         cout << "Unable to open file\n";    
