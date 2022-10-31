@@ -1,8 +1,6 @@
 #include <iostream>
 #include <fstream>
-
 using namespace std;
-
 //ESTRUTURA QUE SERVIRÁ DE MODELO PARA AS INFORMAÇÕES DOS VEÍCULOS SEREM GUARDADAS
 struct Tveiculo{
         string modelo;
@@ -19,7 +17,6 @@ struct Tveiculo{
         string placa;
         float valor;
 };
-
 //FUNÇÃO QUE ORDENARÁ O VETOR DE LEITURA DO ARQUIVO EM ORDEM ALFANUMÉRICA DA PLACA
 void ordena_por_placa(struct Tveiculo *bd[], int *tam){
     Tveiculo *bd2[*tam];
@@ -40,7 +37,6 @@ void ordena_por_placa(struct Tveiculo *bd[], int *tam){
         bd[i]=bd2[i];
     }
 }
-
 //FUNÇÃO QUE VAI TENTAR INSERIR UM NOVO VEÍCULO AO BANCO DE DADOS
 int insercao_veiculo(struct Tveiculo *p[], struct Tveiculo *novo, int *Tam){
 	if(*Tam < 50){
@@ -51,12 +47,12 @@ int insercao_veiculo(struct Tveiculo *p[], struct Tveiculo *novo, int *Tam){
 		return -1;
 	}
 }
-
 //FUNÇÃO QUE VAI TENTAR BUSCAR UM ELEMENTO E, SE ACHAR, PERGUNTAR SE DEVE REMOVER
 int busca_e_remocao_de_veiculo(struct Tveiculo *p[],string placa, int *tam){
     int i, opc;
     if(*tam == 0){
         cout << endl << "BANCO DE DADOS VAZIO!" << endl;
+        return -2;
     }else{
         for(i = 0;i < *tam && p[i]->placa != placa;i++){
         }
@@ -81,7 +77,6 @@ int busca_e_remocao_de_veiculo(struct Tveiculo *p[],string placa, int *tam){
         }
     }
 }
-
 //FUNÇÃO PARA IMPRIMIR O VETOR DE STRUCT NA TELA
 void mostrar(struct Tveiculo *bd[],int *tam){
     for(int i = 0; i < *tam; i++){
@@ -100,9 +95,8 @@ void mostrar(struct Tveiculo *bd[],int *tam){
         cout << bd[i]->valor << endl;
     }
 }
-
 //FUNÇÃO QUE VAI TENTAR MOSTRAR OS 10 VEÍCULOS COM PREÇOS MAIS PRÓXIMO DO VALOR INSERIDO
-int busca_por_preco(struct Tveiculo *bd[], float preco, int *tam){
+void busca_por_preco(struct Tveiculo *bd[], float preco, int *tam){
     Tveiculo *bd2[*tam], *bd3[10];
     //ORDENANDO EM ORDEM CRESCENTE DE PREÇO
     int j = 0, i, k = 0;
@@ -119,9 +113,7 @@ int busca_por_preco(struct Tveiculo *bd[], float preco, int *tam){
     }
     for(i = 0; i < *tam && preco > bd2[i]->valor; i++){
     }
-    bd3[0]=bd2[i];
-    k = 1;
-    for(int e = i - 1, d = i + 1; k < 10; k++){
+    for(int e = i - 1, d = i; k < 10 && (e >=0 || d < *tam); k++){
         if(e>=0){
             if(d < *tam){
                 if((preco-bd2[e]->valor)<(bd2[d]->valor-preco)){
@@ -140,10 +132,9 @@ int busca_por_preco(struct Tveiculo *bd[], float preco, int *tam){
             d++;
         }
     }
-    cout << endl << "OS 10 ELEMENTOS MAIS PROXIMOS!" << endl << endl;
+    cout << endl << "OS ELEMENTOS MAIS PROXIMOS!" << endl << endl;
     mostrar(bd3,&k);
 }
-
 //FUNÇÃO PARA SALVAR OS DADOS NO ARQUIVO TEXTO
 void salvar(struct Tveiculo *p[], int *tam){
     int opc;
@@ -174,8 +165,6 @@ void salvar(struct Tveiculo *p[], int *tam){
         }
     }while(opc != 1 && opc != 2);
 }
-
-
 int main(){
     Tveiculo *bd[50];
     int i = 0;
@@ -200,10 +189,8 @@ int main(){
         }
         myfile.close();
         //GARANTINDO QUE O RESTANTE DO VETOR DE LEITURA SEJA NULO
-        if(i<49){
-            for(int j = i + 1; j < 50; j++){
-                bd[j] = NULL;
-            }
+        for(int j = i + 1; j < 50; j++){
+            bd[j] = NULL;
         }
         //VARIAVEL USADA PARA ESCOLHA DE OPÇÃO NO MENU
         int opc;
