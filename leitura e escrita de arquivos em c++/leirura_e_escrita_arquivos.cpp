@@ -17,6 +17,24 @@ struct Tveiculo{
         string placa;
         float valor;
 };
+//FUNÇÃO PARA IMPRIMIR O VETOR DE STRUCT NA TELA
+void mostrar(struct Tveiculo *bd[],int *tam){
+    for(int i = 0; i < *tam; i++){
+        cout << bd[i]->modelo << " ";
+        cout << bd[i]->marca << " ";
+        cout << bd[i]->tipo << " ";
+        cout << bd[i]->ano << " ";
+        cout << bd[i]->km << " ";
+        cout << bd[i]->potencia << " ";
+        cout << bd[i]->combustivel << " ";
+        cout << bd[i]->cambio << " ";
+        cout << bd[i]->direcao << " ";
+        cout << bd[i]->cor << " ";
+        cout << bd[i]->porta << " ";
+        cout << bd[i]->placa << " ";
+        cout << bd[i]->valor << endl;
+    }
+}
 //FUNÇÃO QUE ORDENARÁ O VETOR DE LEITURA DO ARQUIVO EM ORDEM ALFANUMÉRICA DA PLACA
 void ordena_por_placa(struct Tveiculo *bd[], int *tam){
     Tveiculo *bd2[*tam];
@@ -33,9 +51,7 @@ void ordena_por_placa(struct Tveiculo *bd[], int *tam){
             bd2[j + 1] = bd[i];
     }
     //TRANSEFINDO O VETOR ORDENADO PARA O VETOR DE LEITURA PRINCIPAL
-    for(int i = 0; i < *tam; i++){
-        bd[i]=bd2[i];
-    }
+    mostrar(bd2, tam);
 }
 //FUNÇÃO QUE VAI TENTAR INSERIR UM NOVO VEÍCULO AO BANCO DE DADOS
 int insercao_veiculo(struct Tveiculo *p[], struct Tveiculo *novo, int *Tam){
@@ -77,24 +93,7 @@ int busca_e_remocao_de_veiculo(struct Tveiculo *p[],string placa, int *tam){
         }
     }
 }
-//FUNÇÃO PARA IMPRIMIR O VETOR DE STRUCT NA TELA
-void mostrar(struct Tveiculo *bd[],int *tam){
-    for(int i = 0; i < *tam; i++){
-        cout << bd[i]->modelo << " ";
-        cout << bd[i]->marca << " ";
-        cout << bd[i]->tipo << " ";
-        cout << bd[i]->ano << " ";
-        cout << bd[i]->km << " ";
-        cout << bd[i]->potencia << " ";
-        cout << bd[i]->combustivel << " ";
-        cout << bd[i]->cambio << " ";
-        cout << bd[i]->direcao << " ";
-        cout << bd[i]->cor << " ";
-        cout << bd[i]->porta << " ";
-        cout << bd[i]->placa << " ";
-        cout << bd[i]->valor << endl;
-    }
-}
+
 //FUNÇÃO QUE VAI TENTAR MOSTRAR OS 10 VEÍCULOS COM PREÇOS MAIS PRÓXIMO DO VALOR INSERIDO
 void busca_por_preco(struct Tveiculo *bd[], float preco, int *tam){
     Tveiculo *bd2[*tam], *bd3[10];
