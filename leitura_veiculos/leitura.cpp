@@ -11,7 +11,7 @@
 using namespace std;
 
 //ESTRUTURA QUE SERVIRÁ DE MODELO PARA AS INFORMAÇÕES DOS VEÍCULOS SEREM GUARDADAS
-struct Tveiculo{
+typedef struct{
         string modelo;
         string marca;
         string tipo;
@@ -25,56 +25,87 @@ struct Tveiculo{
         int porta;
         string placa;
         float valor;
-};
+}Tveiculo;
+
+typedef struct no_{
+    Tveiculo * veiculo;
+    no_ * prox;
+}no;
+
+typedef struct{
+    int tam;
+    no * prox;
+}cabeca;
+
+cabeca* inicia_lista(){
+    cabeca* novo = new cabeca;
+    return novo;
+}
+
+void encerra_lista(cabeca *bd){
+    no* ant;
+    for(no* pont = bd->prox; pont != NULL;){
+        ant = pont;
+        pont = pont -> prox;
+        delete(ant);
+    }
+}
+
 //FUNÇÃO PARA IMPRIMIR O VETOR DE STRUCT NA TELA
-void mostrar(struct Tveiculo *bd[],int *tam){
-    for(int i = 0; i < *tam; i++){
-        cout << bd[i]->modelo << " ";
-        cout << bd[i]->marca << " ";
-        cout << bd[i]->tipo << " ";
-        cout << bd[i]->ano << " ";
-        cout << bd[i]->km << " ";
-        cout << bd[i]->potencia << " ";
-        cout << bd[i]->combustivel << " ";
-        cout << bd[i]->cambio << " ";
-        cout << bd[i]->direcao << " ";
-        cout << bd[i]->cor << " ";
-        cout << bd[i]->porta << " ";
-        cout << bd[i]->placa << " ";
-        cout << bd[i]->valor << endl;
+void mostrar(cabeca *bd){
+    for(no * pont  = bd->prox; pont != NULL; pont = pont -> prox){
+        cout << pont->veiculo->modelo << " ";
+        cout << pont->veiculo->marca << " ";
+        cout << pont->veiculo->tipo << " ";
+        cout << pont->veiculo->ano << " ";
+        cout << pont->veiculo->km << " ";
+        cout << pont->veiculo->potencia << " ";
+        cout << pont->veiculo->combustivel << " ";
+        cout << pont->veiculo->cambio << " ";
+        cout << pont->veiculo->direcao << " ";
+        cout << pont->veiculo->cor << " ";
+        cout << pont->veiculo->porta << " ";
+        cout << pont->veiculo->placa << " ";
+        cout << pont->veiculo->valor << endl;
     }
 }
 //FUNÇÃO QUE ORDENARÁ O VETOR DE LEITURA DO ARQUIVO EM ORDEM ALFANUMÉRICA DA PLACA
-void ordena_por_placa(struct Tveiculo *bd[], int *tam){
-    Tveiculo *bd2[*tam];
+void ordena_por_placa(cabeca *bd){
+    cabeca *bd2 = inicia_lista();
     //GARANTINDO QUE O VETOR SECUNDÁRIO SEJA NULO
     bd2[0] = bd[0];
     for(int i = 1, j = 0; i < *tam; i++){
-            for(j = i - 1; bd[i] -> placa < bd2[j] -> placa && j >= 0;j--){         
+            for(j = i - 1; pont->veiculo -> placa < bd2[j] -> placa && j >= 0;j--){         
                 bd2[j+1] = bd2[j];
                 if(j==0){
                     j--;
                     break;
                 }
             }
-            bd2[j + 1] = bd[i];
+            bd2[j + 1] = pont->veiculo;
     }
     mostrar(bd2, tam);
+    encerra_lista(bd2);
 }
 //FUNÇÃO QUE VAI TENTAR INSERIR UM NOVO VEÍCULO AO BANCO DE DADOS
-int insercao_veiculo(struct Tveiculo *p[], struct Tveiculo *novo, int *Tam){
-	if(*Tam < 50){
-		p[*Tam] = novo;
-		*Tam = *Tam + 1;
-		return 0;
-	}else{
-		return -1;
-	}
+int insercao_veiculo(cabeca *bd, Tveiculo * veiculo){
+    no* novo = new no;
+    novo -> veiculo = veiculo;
+    novo -> prox = NULL;
+    if(bd->prox == NULL){
+        bd->prox == novo;
+    }else{
+        no * pont;
+        for(pont = bd->prox; bd->prox != NULL; pont=pont->prox){
+        }
+        pont -> prox = novo;
+        bd->tam = bd -> tam + 1;
+    }
 }
 //FUNÇÃO QUE VAI TENTAR BUSCAR UM ELEMENTO E, SE ACHAR, PERGUNTAR SE DEVE REMOVER
-int busca_e_remocao_de_veiculo(struct Tveiculo *p[],string placa, int *tam){
-    int i, opc;
-    if(*tam == 0){
+int busca_e_remocao_de_veiculo(cabeca *bd, string placa){
+    int opc;
+    if(bd->prox == NULL){
         cout << endl << "BANCO DE DADOS VAZIO!" << endl;
         return -2;
     }else{
@@ -108,14 +139,14 @@ void busca_por_preco(struct Tveiculo *bd[], float preco, int *tam){
     int j = 0, i, k = 0;
     bd2[0] = bd[0];
     for(i = 1; i < *tam; i++){
-            for(j = i - 1; bd[i] -> valor < bd2[j] -> valor && j >= 0;j--){         
+            for(j = i - 1; pont->veiculo -> valor < bd2[j] -> valor && j >= 0;j--){         
                 bd2[j+1] = bd2[j];
                 if(j==0){
                     j--;
                     break;
                 }
             }
-            bd2[j + 1] = bd[i];
+            bd2[j + 1] = pont->veiculo;
     }
     for(i = 0; i < *tam && preco > bd2[i]->valor; i++){
     }
@@ -142,7 +173,7 @@ void busca_por_preco(struct Tveiculo *bd[], float preco, int *tam){
     mostrar(bd3,&k);
 }
 //FUNÇÃO PARA SALVAR OS DADOS NO ARQUIVO TEXTO
-void salvar(struct Tveiculo *p[], int *tam){
+void salvar(cabeca *bd){
     int opc;
     do{
         cout << "[1] - SALVAR" << endl << "[2] - NÃO SALVAR" << endl << endl << "ESCOLHA UMA OPÇÃO: ";
@@ -150,7 +181,7 @@ void salvar(struct Tveiculo *p[], int *tam){
         if(opc == 1){
             ofstream myfile ("BD_veiculos.txt");
             if(myfile.is_open()){
-                for(int i = 0; i < *tam; i++){
+                for(no* pont = bd->prox; pont; i++){
                     if(i < *tam - 1){
                         myfile << p[i]->modelo << " " << p[i]->marca << " " << p[i]->tipo << " " << p[i]->ano << " " << p[i]->km 
                         << " " << p[i]->potencia << " " << p[i]->combustivel << " " << p[i]->cambio<< " " << p[i]->direcao<< " " 
@@ -172,32 +203,29 @@ void salvar(struct Tveiculo *p[], int *tam){
     }while(opc != 1 && opc != 2);
 }
 int main(){
-    Tveiculo *bd[50];
-    int i = 0;
+    cabeca *bd = inicia_lista();
     ifstream myfile ("BD_veiculos.txt");
     if (myfile.is_open() ) {
-        while (!myfile.eof()) {
-            bd[i]=new Tveiculo;
-            myfile >> bd[i]->modelo;
-            myfile >> bd[i]->marca;
-            myfile >> bd[i]->tipo;
-            myfile >> bd[i]->ano;
-            myfile >> bd[i]->km;
-            myfile >> bd[i]->potencia;
-            myfile >> bd[i]->combustivel;
-            myfile >> bd[i]->cambio;
-            myfile >> bd[i]->direcao;
-            myfile >> bd[i]->cor;
-            myfile >> bd[i]->porta;
-            myfile >> bd[i]->placa;
-            myfile >> bd[i]->valor;
-            i++;
+        no* percorre = bd->prox;
+        while (!myfile.eof()){
+            percorre = new no;
+            myfile >> percorre->veiculo->modelo;
+            myfile >> percorre->veiculo->marca;
+            myfile >> percorre->veiculo->tipo;
+            myfile >> percorre->veiculo->ano;
+            myfile >> percorre->veiculo->km;
+            myfile >> percorre->veiculo->potencia;
+            myfile >> percorre->veiculo->combustivel;
+            myfile >> percorre->veiculo->cambio;
+            myfile >> percorre->veiculo->direcao;
+            myfile >> percorre->veiculo->cor;
+            myfile >> percorre->veiculo->porta;
+            myfile >> percorre->veiculo->placa;
+            myfile >> percorre->veiculo->valor;
+            percorre = percorre -> prox;
+            bd -> tam = bd -> tam + 1;
         }
         myfile.close();
-        //GARANTINDO QUE O RESTANTE DO VETOR DE LEITURA SEJA NULO
-        for(int j = i + 1; j < 50; j++){
-            bd[j] = NULL;
-        }
         //VARIAVEL USADA PARA ESCOLHA DE OPÇÃO NO MENU
         int opc;
         //VARIAVEL USADA PARA RECEBER O PREÇO DO VEÍCULO
@@ -255,11 +283,11 @@ int main(){
                     cout <<  "ORDENADO! " << endl;
                     break;
                 case 4:
-                    mostrar(bd, &i);
+                    mostrar(bd);
                     break;
                 case 5:
                     cout << "ENTRADA DE USUÁRIO SIMULADA" << endl;
-                    insercao_veiculo(bd, inserir, &i);
+                    insercao_veiculo(bd, inserir);
                     break;
                 default:
                     cout << "VALOR INVÁLIDO, DIGITE APENAS '0', '1', '2', '3', '4' OU '5'!" <<  endl;
@@ -267,9 +295,7 @@ int main(){
             }
         }while(opc != 0);
     //LIBERANDO MEMÓRIA USADA
-    for(int j = 0; j < i;j++){
-        delete (bd[j]);
-    }
+    encerra_lista(bd);
     }else{
         cout << "Unable to open file\n";    
 	}
