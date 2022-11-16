@@ -72,19 +72,26 @@ void mostrar(cabeca *bd){
 //FUNÇÃO QUE ORDENARÁ O VETOR DE LEITURA DO ARQUIVO EM ORDEM ALFANUMÉRICA DA PLACA
 void ordena_por_placa(cabeca *bd){
     cabeca *bd2 = inicia_lista();
-    //GARANTINDO QUE O VETOR SECUNDÁRIO SEJA NULO
-    bd2[0] = bd[0];
-    for(int i = 1, j = 0; i < *tam; i++){
-            for(j = i - 1; pont->veiculo -> placa < bd2[j] -> placa && j >= 0;j--){         
-                bd2[j+1] = bd2[j];
-                if(j==0){
-                    j--;
-                    break;
-                }
-            }
-            bd2[j + 1] = pont->veiculo;
+    for(no* percorre = bd2->prox; bd2->tam <= bd->tam; percorre = percorre -> prox){
+        percorre = new no;
+        percorre->prox = NULL;
+        bd2->tam = bd2->tam + 1;
     }
-    mostrar(bd2, tam);
+    bd2->prox->veiculo = bd->prox->veiculo; 
+    no* pont1 = bd->prox->prox;
+    no* pont2;
+    for(; pont1 != NULL; pont1 = pont1 -> prox){
+        for(pont2 = bd2->prox; pont2->veiculo -> placa < pont1 -> veiculo -> placa && pont2 != NULL; pont2=pont2->prox){
+        }
+        if(pont2 == bd2->prox){
+            pont2 -> prox -> veiculo = pont2->veiculo;
+            bd2->prox->veiculo = pont1->veiculo;
+        }else{
+            pont2->prox->veiculo = pont2 -> veiculo;
+            pont2->veiculo = pont1->veiculo;
+        }
+    }
+    mostrar(bd2);
     encerra_lista(bd2);
 }
 //FUNÇÃO QUE VAI TENTAR INSERIR UM NOVO VEÍCULO AO BANCO DE DADOS
@@ -109,9 +116,11 @@ int busca_e_remocao_de_veiculo(cabeca *bd, string placa){
         cout << endl << "BANCO DE DADOS VAZIO!" << endl;
         return -2;
     }else{
-        for(i = 0;i < *tam && p[i]->placa != placa;i++){
+        no * ant;
+        no* pont;
+        for(pont = bd->prox;pont != NULL && pont->veiculo->placa != placa; ant = pont, pont = pont -> prox){
         }
-        if(i==*tam){
+        if(pont == NULL){
             return -1;
         }else{
             cout << "ELEMENTO ENCONTRADO. DESEJA REMOVÊ-LO? ( 1 - SIM, 0 - NÃO) ";
@@ -119,14 +128,8 @@ int busca_e_remocao_de_veiculo(cabeca *bd, string placa){
             if(opc == 0){
                 return 0;
             }else{
-                for(int j = i; j < *tam;j++){
-                    if(j < *tam - 1){
-                        p[j] = p[j+1];
-                    }else{
-                        p[j] = NULL;
-                    }
-                }
-                *tam = *tam - 1;
+                ant->prox = pont->prox;
+                delete(pont);
                 return 1;
             }
         }
