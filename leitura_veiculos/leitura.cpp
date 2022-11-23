@@ -11,7 +11,7 @@
 using namespace std;
 
 //ESTRUTURA QUE SERVIRÁ DE MODELO PARA AS INFORMAÇÕES DOS VEÍCULOS SEREM GUARDADAS
-typedef struct{
+struct Tveiculo{
         string modelo;
         string marca;
         string tipo;
@@ -25,7 +25,7 @@ typedef struct{
         int porta;
         string placa;
         float valor;
-}Tveiculo;
+};
 
 typedef struct no_{
     Tveiculo * veiculo;
@@ -37,8 +37,10 @@ typedef struct{
     no * prox;
 }cabeca;
 
-cabeca* inicia_lista(){
-    cabeca* novo = new cabeca;
+cabeca * inicia_lista(){
+    cabeca * novo = new cabeca;
+    novo -> prox = NULL;
+    novo -> tam = 0;
     return novo;
 }
 
@@ -48,6 +50,33 @@ void encerra_lista(cabeca *bd){
         ant = pont;
         pont = pont -> prox;
         delete(ant);
+    }
+}
+
+void insere_pilha(cabeca * pilha, Tveiculo *veiculo){
+    no* novo = new no;
+    novo -> veiculo = veiculo;
+    novo -> prox = pilha -> prox;
+    pilha -> prox = novo;
+}
+
+no* remove_inicio(cabeca *bd){
+    no* retorno = bd->prox;
+    bd->prox = retorno->prox;
+    return retorno;
+}
+
+void insere_fila(cabeca *fila, Tveiculo *veiculo){
+    no* novo = new no;
+    novo -> veiculo = veiculo;
+    novo -> prox = NULL;
+    no* pont;
+    if(fila->prox != NULL){
+        for(pont = fila->prox; pont ->prox != NULL; pont = pont -> prox){
+        }
+        pont -> prox = novo;
+    }else{
+        fila->prox = novo;
     }
 }
 
@@ -95,15 +124,15 @@ void ordena_por_placa(cabeca *bd){
     encerra_lista(bd2);
 }
 //FUNÇÃO QUE VAI TENTAR INSERIR UM NOVO VEÍCULO AO BANCO DE DADOS
-int insercao_veiculo(cabeca *bd, Tveiculo * veiculo){
+void insercao_veiculo(cabeca *bd, Tveiculo * veiculo){
     no* novo = new no;
     novo -> veiculo = veiculo;
     novo -> prox = NULL;
     if(bd->prox == NULL){
-        bd->prox == novo;
+        bd->prox = novo;
     }else{
         no * pont;
-        for(pont = bd->prox; bd->prox != NULL; pont=pont->prox){
+        for(pont = bd->prox; pont->prox != NULL; pont=pont->prox){
         }
         pont -> prox = novo;
         bd->tam = bd -> tam + 1;
@@ -116,8 +145,8 @@ int busca_e_remocao_de_veiculo(cabeca *bd, string placa){
         cout << endl << "BANCO DE DADOS VAZIO!" << endl;
         return -2;
     }else{
-        no * ant;
-        no* pont;
+        no * ant = NULL;
+        no * pont;
         for(pont = bd->prox;pont != NULL && pont->veiculo->placa != placa; ant = pont, pont = pont -> prox){
         }
         if(pont == NULL){
@@ -128,7 +157,11 @@ int busca_e_remocao_de_veiculo(cabeca *bd, string placa){
             if(opc == 0){
                 return 0;
             }else{
-                ant->prox = pont->prox;
+                if(ant == NULL){
+                    bd->prox = pont->prox;
+                }else{
+                    ant->prox = pont->prox;
+                }
                 delete(pont);
                 return 1;
             }
@@ -136,7 +169,7 @@ int busca_e_remocao_de_veiculo(cabeca *bd, string placa){
     }
 }
 //FUNÇÃO QUE VAI TENTAR MOSTRAR OS 10 VEÍCULOS COM PREÇOS MAIS PRÓXIMO DO VALOR INSERIDO
-void busca_por_preco(struct Tveiculo *bd[], float preco, int *tam){
+/*void busca_por_preco(struct Tveiculo *bd[], float preco, int *tam){
     Tveiculo *bd2[*tam], *bd3[10];
     //ORDENANDO EM ORDEM CRESCENTE DE PREÇO
     int j = 0, i, k = 0;
@@ -174,25 +207,25 @@ void busca_por_preco(struct Tveiculo *bd[], float preco, int *tam){
     }
     cout << endl << "OS ELEMENTOS MAIS PROXIMOS!" << endl << endl;
     mostrar(bd3,&k);
-}
+}*/
 //FUNÇÃO PARA SALVAR OS DADOS NO ARQUIVO TEXTO
 void salvar(cabeca *bd){
-    int opc;
+    int opc, i = 0;
     do{
         cout << "[1] - SALVAR" << endl << "[2] - NÃO SALVAR" << endl << endl << "ESCOLHA UMA OPÇÃO: ";
         cin >> opc;
         if(opc == 1){
             ofstream myfile ("BD_veiculos.txt");
             if(myfile.is_open()){
-                for(no* pont = bd->prox; pont; i++){
-                    if(i < *tam - 1){
-                        myfile << p[i]->modelo << " " << p[i]->marca << " " << p[i]->tipo << " " << p[i]->ano << " " << p[i]->km 
-                        << " " << p[i]->potencia << " " << p[i]->combustivel << " " << p[i]->cambio<< " " << p[i]->direcao<< " " 
-                        << p[i]->cor<< " " << p[i]->porta<< " " << p[i]->placa<< " " << p[i]->valor << "\n";
+                for(no* pont = bd->prox; pont != NULL; pont = pont -> prox, i++){
+                    if( i < bd->tam - 1){
+                        myfile << pont->veiculo->modelo << " " << pont->veiculo->marca << " " << pont->veiculo->tipo << " " << pont->veiculo->ano << " " << pont->veiculo->km 
+                        << " " << pont->veiculo->potencia << " " << pont->veiculo->combustivel << " " << pont->veiculo->cambio<< " " << pont->veiculo->direcao<< " " 
+                        << pont->veiculo->cor<< " " << pont->veiculo->porta<< " " << pont->veiculo->placa<< " " << pont->veiculo->valor << "\n";
                     }else{
-                        myfile << p[i]->modelo << " " << p[i]->marca << " " << p[i]->tipo << " " << p[i]->ano << " " << p[i]->km 
-                        << " " << p[i]->potencia << " " << p[i]->combustivel << " " << p[i]->cambio<< " " << p[i]->direcao<< " " 
-                        << p[i]->cor<< " " << p[i]->porta<< " " << p[i]->placa<< " " << p[i]->valor;
+                        myfile << pont->veiculo->modelo << " " << pont->veiculo->marca << " " << pont->veiculo->tipo << " " << pont->veiculo->ano << " " << pont->veiculo->km 
+                        << " " << pont->veiculo->potencia << " " << pont->veiculo->combustivel << " " << pont->veiculo->cambio<< " " << pont->veiculo->direcao<< " " 
+                        << pont->veiculo->cor<< " " << pont->veiculo->porta<< " " << pont->veiculo->placa<< " " << pont->veiculo->valor;
                     }
                 }
                 myfile.close();
@@ -207,11 +240,14 @@ void salvar(cabeca *bd){
 }
 int main(){
     cabeca *bd = inicia_lista();
+    cabeca *pilha = inicia_lista();
+    cabeca *fila = inicia_lista();
     ifstream myfile ("BD_veiculos.txt");
     if (myfile.is_open() ) {
+        bd->prox = new no;
+        bd->prox->veiculo = new Tveiculo;
         no* percorre = bd->prox;
         while (!myfile.eof()){
-            percorre = new no;
             myfile >> percorre->veiculo->modelo;
             myfile >> percorre->veiculo->marca;
             myfile >> percorre->veiculo->tipo;
@@ -225,7 +261,19 @@ int main(){
             myfile >> percorre->veiculo->porta;
             myfile >> percorre->veiculo->placa;
             myfile >> percorre->veiculo->valor;
-            percorre = percorre -> prox;
+            if(percorre->veiculo->direcao == "Hidráulica"){
+                insere_pilha(pilha, percorre->veiculo);
+                pilha->tam = pilha->tam + 1;
+            }
+            if(percorre->veiculo->cambio == "Automático"){
+                insere_fila(fila, percorre->veiculo);
+                fila->tam = fila->tam + 1;
+            }
+            if(!myfile.eof()){
+                percorre -> prox = new no;
+                percorre = percorre -> prox;
+                percorre->veiculo = new Tveiculo;
+            }
             bd -> tam = bd -> tam + 1;
         }
         myfile.close();
@@ -267,22 +315,22 @@ int main(){
             cin >> opc;
             switch(opc){
                 case 0:
-                    salvar(bd, &i);
+                    salvar(bd);
                     break;
                 case 1:
                     cout <<  "DIGITE A PLACA DO VEÍCULO A PROCURAR, NO MODELO AAA0000: ";
 		            cin >> placa;
-                    if(busca_e_remocao_de_veiculo(bd, placa, &i) == -1){
+                    if(busca_e_remocao_de_veiculo(bd, placa) == -1){
                         cout << "ELEMENTO NÃO ENCONTRADO!" << endl;
                     }
                     break;
                 case 2:
                     cout << "DIGITE O PREÇO DO VEÍCULO A PROCURAR: ";
 		            cin >> preco;
-                    busca_por_preco(bd, preco, &i);
+                    //busca_por_preco(bd, preco, &i);
                     break;
                 case 3:
-                    ordena_por_placa(bd, &i);
+                    ordena_por_placa(bd);
                     cout <<  "ORDENADO! " << endl;
                     break;
                 case 4:
