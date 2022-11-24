@@ -81,21 +81,26 @@ void insere_fila(cabeca *fila, Tveiculo *veiculo){
 }
 
 //FUNÇÃO PARA IMPRIMIR O VETOR DE STRUCT NA TELA
-void mostrar(cabeca *bd){
-    for(no * pont  = bd->prox; pont != NULL; pont = pont -> prox){
-        cout << pont->veiculo->modelo << " ";
-        cout << pont->veiculo->marca << " ";
-        cout << pont->veiculo->tipo << " ";
-        cout << pont->veiculo->ano << " ";
-        cout << pont->veiculo->km << " ";
-        cout << pont->veiculo->potencia << " ";
-        cout << pont->veiculo->combustivel << " ";
-        cout << pont->veiculo->cambio << " ";
-        cout << pont->veiculo->direcao << " ";
-        cout << pont->veiculo->cor << " ";
-        cout << pont->veiculo->porta << " ";
-        cout << pont->veiculo->placa << " ";
-        cout << pont->veiculo->valor << endl;
+int mostrar(cabeca *bd){
+    if(bd->prox != NULL){
+        for(no * pont  = bd->prox; pont != NULL; pont = pont -> prox){
+            cout << pont->veiculo->modelo << " ";
+            cout << pont->veiculo->marca << " ";
+            cout << pont->veiculo->tipo << " ";
+            cout << pont->veiculo->ano << " ";
+            cout << pont->veiculo->km << " ";
+            cout << pont->veiculo->potencia << " ";
+            cout << pont->veiculo->combustivel << " ";
+            cout << pont->veiculo->cambio << " ";
+            cout << pont->veiculo->direcao << " ";
+            cout << pont->veiculo->cor << " ";
+            cout << pont->veiculo->porta << " ";
+            cout << pont->veiculo->placa << " ";
+            cout << pont->veiculo->valor << endl;
+        }
+        return 1;
+    }else{
+        return 0;
     }
 }
 //FUNÇÃO QUE ORDENARÁ O VETOR DE LEITURA DO ARQUIVO EM ORDEM ALFANUMÉRICA DA PLACA
@@ -124,7 +129,7 @@ void ordena_por_placa(cabeca *bd){
     encerra_lista(bd2);
 }
 //FUNÇÃO QUE VAI TENTAR INSERIR UM NOVO VEÍCULO AO BANCO DE DADOS
-void insercao_veiculo(cabeca *bd, Tveiculo * veiculo){
+void insercao_veiculo(cabeca *bd, cabeca *pilha, cabeca *fila, Tveiculo * veiculo){
     no* novo = new no;
     novo -> veiculo = veiculo;
     novo -> prox = NULL;
@@ -137,9 +142,15 @@ void insercao_veiculo(cabeca *bd, Tveiculo * veiculo){
         pont -> prox = novo;
         bd->tam = bd -> tam + 1;
     }
+    if(veiculo -> direcao == "Hidráulica"){
+        insere_pilha(pilha, veiculo);
+    }
+    if(veiculo->cambio == "Automático"){
+        insere_fila(fila, veiculo);
+    }
 }
 //FUNÇÃO QUE VAI TENTAR BUSCAR UM ELEMENTO E, SE ACHAR, PERGUNTAR SE DEVE REMOVER
-int busca_e_remocao_de_veiculo(cabeca *bd, string placa){
+int busca_e_remocao_de_veiculo(cabeca *bd, cabeca *pilha, cabeca *fila, string placa){
     int opc;
     if(bd->prox == NULL){
         cout << endl << "BANCO DE DADOS VAZIO!" << endl;
@@ -156,7 +167,7 @@ int busca_e_remocao_de_veiculo(cabeca *bd, string placa){
             cin >> opc;
             if(opc == 0){
                 return 0;
-            }else{
+            }else if(opc == 1){
                 if(ant == NULL){
                     bd->prox = pont->prox;
                 }else{
@@ -164,6 +175,8 @@ int busca_e_remocao_de_veiculo(cabeca *bd, string placa){
                 }
                 delete(pont);
                 return 1;
+            }else{
+                cout << endl << "DIGITE APENAS '1' OU '0'" << endl;
             }
         }
     }
@@ -238,6 +251,41 @@ void salvar(cabeca *bd){
         }
     }while(opc != 1 && opc != 2);
 }
+
+int make_pilha(cabeca *pilha, cabeca *bd){
+    no* pont = bd -> prox;
+    if(bd->prox != NULL){
+        for(; pont != NULL ; pont = pont -> prox){
+            if(pont -> veiculo -> direcao == "Hidráulica"){
+                insere_pilha(pilha,pont->veiculo);
+                pilha -> tam = pilha -> tam + 1;
+            }
+        }
+        if(pilha->tam == 0){ // significa que não há pelo menos um veículo com direção hidráulica no banco de dados
+            return -1;
+        }
+        return 1;//significa que funcionou
+    }
+    return 0;//significa que a lista encadeada principal está vazia
+}
+
+int make_fila(cabeca *fila, cabeca *bd){
+    no* pont = bd -> prox;
+    if(bd->prox != NULL){
+            for(; pont != NULL; pont = pont -> prox){
+                if(pont-> veiculo->cambio == "Automático"){
+                    insere_fila(fila,pont->veiculo);
+                    fila->tam = fila -> tam + 1;
+                }
+            }
+            if(fila->tam == 0){ // significa que não há pelo menos um veículo com câmbio automático no banco de dados
+            return -1;
+        }
+        return 1;//significa que funcionou
+    }
+    return 0;//significa que a lista encadeada principal está vazia
+}
+
 int main(){
     cabeca *bd = inicia_lista();
     cabeca *pilha = inicia_lista();
@@ -261,14 +309,6 @@ int main(){
             myfile >> percorre->veiculo->porta;
             myfile >> percorre->veiculo->placa;
             myfile >> percorre->veiculo->valor;
-            if(percorre->veiculo->direcao == "Hidráulica"){
-                insere_pilha(pilha, percorre->veiculo);
-                pilha->tam = pilha->tam + 1;
-            }
-            if(percorre->veiculo->cambio == "Automático"){
-                insere_fila(fila, percorre->veiculo);
-                fila->tam = fila->tam + 1;
-            }
             if(!myfile.eof()){
                 percorre -> prox = new no;
                 percorre = percorre -> prox;
@@ -278,7 +318,7 @@ int main(){
         }
         myfile.close();
         //VARIAVEL USADA PARA ESCOLHA DE OPÇÃO NO MENU
-        int opc;
+        int opc,opc2,verifica;
         //VARIAVEL USADA PARA RECEBER O PREÇO DO VEÍCULO
         float preco;
         //VARIAVEL USADA PARA RECEBER A PLACA DO VEÍCULO
@@ -310,8 +350,8 @@ int main(){
         do{
             //MENU
             cout << "--------------------------------------------------------------" << endl << "[0] - SAIR" << endl << "[1] - BUSCA POR PLACA" << endl 
-            << "[2] - BUSCA POR PREÇO" << endl << "[3] - ORDENAR PELA PLACA" << endl << "[4] - MOSTRAR" << endl << "[5] - INSERIR" <<  endl
-            << "--------------------------------------------------------------" << endl << "ESCOLHA UMA OPÇÃO: ";
+            << "[2] - BUSCA POR PREÇO" << endl << "[3] - ORDENAR PELA PLACA" << endl << "[4] - RELATÓRIO" << endl << "[5] - INSERIR"
+            << endl << "[6] - SEPARAR POR DIREÇÃO HIDRÁULICA" << endl << "[7] - SEPARAR POR CÂMBIO AUTOMÁTICO" << endl << "--------------------------------------------------------------" << endl << "ESCOLHA UMA OPÇÃO: ";
             cin >> opc;
             switch(opc){
                 case 0:
@@ -320,7 +360,7 @@ int main(){
                 case 1:
                     cout <<  "DIGITE A PLACA DO VEÍCULO A PROCURAR, NO MODELO AAA0000: ";
 		            cin >> placa;
-                    if(busca_e_remocao_de_veiculo(bd, placa) == -1){
+                    if(busca_e_remocao_de_veiculo(bd, pilha, fila, placa) == -1){
                         cout << "ELEMENTO NÃO ENCONTRADO!" << endl;
                     }
                     break;
@@ -334,20 +374,69 @@ int main(){
                     cout <<  "ORDENADO! " << endl;
                     break;
                 case 4:
-                    mostrar(bd);
+                    do{
+                        cout << "--------------------------------------------------------------" << endl << "[0] - TODOS OS VEÍCULOS" << endl << "[1] - VEÍCULOS COM DIREÇÂO HIDRÁULICA" << endl 
+                        << "[2] - VEÍCULOS COM CÂMBIO AUTOMÁTICO" << endl << "--------------------------------------------------------------" << endl << "ESCOLHA UMA OPÇÃO: ";
+                        cin >> opc2;
+                        if(opc2 == 0){
+                            if(mostrar(bd) == 0){
+                                cout << endl << "LISTA VAZIA" << endl;
+                            }
+                        }else if(opc2 == 1){
+                            if(mostrar(pilha) == 0){
+                                cout << endl << "LISTA VAZIA" << endl;
+                            }
+                        }else if(opc2 == 2){
+                            if(mostrar(fila) == 0){
+                                cout << endl << "LISTA VAZIA" << endl;
+                            }
+                        }else{
+                            cout << endl << "VALOR INVÁLIDO, DIGITE APENAS '0', '1' OU '2'" << endl;
+                        }
+                    }while(opc2 != 0 && opc2 != 1 && opc2 != 2);
                     break;
                 case 5:
                     cout << "ENTRADA DE USUÁRIO SIMULADA" << endl;
-                    insercao_veiculo(bd, inserir);
+                    insercao_veiculo(bd, pilha, fila, inserir);
+                    break;
+                case 6:
+                    if(pilha -> prox == NULL){
+                        verifica = make_pilha(pilha, bd);
+                        if(verifica == 1){
+                            cout << endl << "PARTIÇÃO SEPARADA CRIADA COM SUCESSO" << endl;
+                        }else if(verifica == -1){
+                                cout << endl << "NÃO HÁ ELEMENTOS COM DIREÇÃO HIDRÁULICA" << endl;
+                        }else if(verifica == 0){
+                            cout << endl << "FALHA AO TENTAR CRIAR PARTIÇÃO" << endl;
+                        }
+                    }else{
+                        cout << endl << "JÁ FOI FEITA A SEPARAÇÃO" << endl;
+                    }
+                    break;
+                case 7:
+                    if(fila->prox== NULL){
+                        verifica = make_fila(fila, bd);
+                        if(verifica == 1){
+                            cout << endl << "PARTIÇÃO SEPARADA CRIADA COM SUCESSO" << endl;
+                        }else if(verifica == -1){
+                                cout << endl << "NÃO HÁ ELEMENTOS COM DIREÇÃO HIDRÁULICA" << endl;
+                        }else if(verifica == 0){
+                            cout << endl << "FALHA AO TENTAR CRIAR PARTIÇÃO" << endl;
+                        }
+                    }else{
+                        cout << endl << "JÁ FOI FEITA A SEPARAÇÃO" << endl;
+                    }
                     break;
                 default:
-                    cout << "VALOR INVÁLIDO, DIGITE APENAS '0', '1', '2', '3', '4' OU '5'!" <<  endl;
+                    cout << "VALOR INVÁLIDO, DIGITE APENAS '0' - '7'!" <<  endl;
                     break;
             }
         }while(opc != 0);
     //LIBERANDO MEMÓRIA USADA
     encerra_lista(bd);
+    encerra_lista(pilha);
+    encerra_lista(fila);
     }else{
-        cout << "Unable to open file\n";    
+        cout << "Unable to open file\n";
 	}
 }
