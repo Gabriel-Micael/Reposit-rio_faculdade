@@ -98,28 +98,26 @@ int mostrar(cabeca *bd) {
     return 0;
   }
 }
-// FUNÇÃO QUE ORDENARÁ O VETOR DE LEITURA DO ARQUIVO EM ORDEM ALFANUMÉRICA DA
-// PLACA
+// FUNÇÃO QUE ORDENARÁ O VETOR DE LEITURA DO ARQUIVO EM ORDEM ALFANUMÉRICA DA PLACA
 void ordena_por_placa(cabeca *bd) {
   cabeca *bd2 = inicia_lista();
   bd2->prox = new no;
   bd2->tam = 1;
   no * pont2 = bd2->prox;
   no * ant;
-  for (; bd2->tam < bd->tam; pont2 = pont2->prox) {
-    pont2->prox = new no;
-    bd2->tam = bd2->tam + 1;
-  }
+  Tveiculo * aux1,  * aux2;
+  bd2-> prox -> veiculo= bd-> prox -> veiculo;
+  no * pont3 = bd2 -> prox;
   for (no *pont1 = bd->prox; pont1 != NULL; pont1 = pont1->prox) {
     ant = NULL;
-    for (pont2 = bd2->prox;
-         pont2->prox != NULL &&
-         pont2->prox->veiculo->placa < pont1->veiculo->placa;
-        ant = pont2, pont2 = pont2->prox) {
+    if(pont1 -> veiculo -> placa < bd2 -> prox -> veiculo -> placa){
+        
     }
-    if(ant == NULL){
-      pont2 -> prox -> veiculo = pont2 -> veiculo;
+    for (pont2 = bd2->prox; pont2->prox != NULL && pont2->prox->veiculo->placa < pont1->veiculo->placa; ant = pont2, pont2 = pont2->prox) {
     }
+    pont3 -> prox = new no;
+    pont3 = pont3 -> prox;
+    bd2 -> tam = bd2 -> tam + 1;
   }
   mostrar(bd2);
   encerra_lista(bd2);
@@ -163,6 +161,7 @@ int busca_e_remocao_de_veiculo(cabeca *bd, cabeca *pilha, cabeca *fila,
   if (pont == NULL) {
     return -1;
   } else {
+    do{
     cout << "ELEMENTO ENCONTRADO. DESEJA REMOVÊ-LO? ( 1 - SIM, 0 - NÃO) ";
     cin >> opc;
     if (opc == 0) {
@@ -211,6 +210,7 @@ int busca_e_remocao_de_veiculo(cabeca *bd, cabeca *pilha, cabeca *fila,
     } else {
       cout << endl << "DIGITE APENAS '1' OU '0'" << endl;
     }
+    }while(opc != 0 && opc != 1);
   }
 }
 
