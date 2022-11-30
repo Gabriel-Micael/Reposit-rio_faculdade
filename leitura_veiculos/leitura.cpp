@@ -55,13 +55,21 @@ void encerra_lista(cabeca *bd) {
   delete (bd);
 }
 
-void insere_pilha(cabeca *pilha, Tveiculo *veiculo) {
+void insere_inicio(cabeca *pilha, Tveiculo *veiculo) {
   no *novo = new no;
   novo->veiculo = veiculo;
   novo->prox = pilha->prox;
   pilha->prox = novo;
+  pilha->tam = pilha->tam + 1;
 }
-void insere_fila(cabeca *fila, Tveiculo *veiculo) {
+
+no *remove_inicio(cabeca *pilha) {
+  no *retorno = pilha->prox;
+  pilha->prox = retorno->prox;
+  pilha->tam = pilha->tam - 1;
+  return retorno;
+}
+void insere_fim(cabeca *fila, Tveiculo *veiculo) {
   no *novo = new no;
   novo->veiculo = veiculo;
   novo->prox = NULL;
@@ -73,6 +81,7 @@ void insere_fila(cabeca *fila, Tveiculo *veiculo) {
   } else {
     fila->prox = novo;
   }
+  fila->tam = fila->tam + 1;
 }
 
 // FUNÇÃO PARA IMPRIMIR O VETOR DE STRUCT NA TELA
@@ -103,21 +112,22 @@ void ordena_por_placa(cabeca *bd) {
   cabeca *bd2 = inicia_lista();
   bd2->prox = new no;
   bd2->tam = 1;
-  no * pont2 = bd2->prox;
-  no * ant;
-  Tveiculo * aux1,  * aux2;
-  bd2-> prox -> veiculo= bd-> prox -> veiculo;
-  no * pont3 = bd2 -> prox;
+  no *pont2 = bd2->prox;
+  no *ant;
+  Tveiculo *aux1, *aux2;
+  bd2->prox->veiculo = bd->prox->veiculo;
+  no *pont3 = bd2->prox;
   for (no *pont1 = bd->prox; pont1 != NULL; pont1 = pont1->prox) {
     ant = NULL;
-    if(pont1 -> veiculo -> placa < bd2 -> prox -> veiculo -> placa){
-        
+    if (pont1->veiculo->placa < bd2->prox->veiculo->placa) {
     }
-    for (pont2 = bd2->prox; pont2->prox != NULL && pont2->prox->veiculo->placa < pont1->veiculo->placa; ant = pont2, pont2 = pont2->prox) {
+    for (pont2 = bd2->prox; pont2->prox != NULL &&
+                            pont2->prox->veiculo->placa < pont1->veiculo->placa;
+         ant = pont2, pont2 = pont2->prox) {
     }
-    pont3 -> prox = new no;
-    pont3 = pont3 -> prox;
-    bd2 -> tam = bd2 -> tam + 1;
+    pont3->prox = new no;
+    pont3 = pont3->prox;
+    bd2->tam = bd2->tam + 1;
   }
   mostrar(bd2);
   encerra_lista(bd2);
@@ -138,10 +148,10 @@ void insercao_veiculo(cabeca *bd, cabeca *pilha, cabeca *fila,
     bd->tam = bd->tam + 1;
   }
   if (veiculo->direcao == "Hidráulica") {
-    insere_pilha(pilha, veiculo);
+    insere_inicio(pilha, veiculo);
   }
   if (veiculo->cambio == "Automático") {
-    insere_fila(fila, veiculo);
+    insere_fim(fila, veiculo);
   }
 }
 // FUNÇÃO QUE VAI TENTAR BUSCAR UM ELEMENTO E, SE ACHAR, PERGUNTAR SE DEVE
@@ -161,56 +171,36 @@ int busca_e_remocao_de_veiculo(cabeca *bd, cabeca *pilha, cabeca *fila,
   if (pont == NULL) {
     return -1;
   } else {
-    do{
-    cout << "ELEMENTO ENCONTRADO. DESEJA REMOVÊ-LO? ( 1 - SIM, 0 - NÃO) ";
-    cin >> opc;
-    if (opc == 0) {
-      return 0;
-    } else if (opc == 1) {
-      if (ant == NULL) {
-        bd->prox = pont->prox;
+    do {
+      cout << "ELEMENTO ENCONTRADO. DESEJA REMOVÊ-LO? ( 1 - SIM, 0 - NÃO) ";
+      cin >> opc;
+      if (opc == 0) {
+        return 0;
+      } else if (opc == 1) {
+        if (ant == NULL) {
+          bd->prox = pont->prox;
+        } else {
+          ant->prox = pont->prox;
+        }
+        // atualizando a pilha
+        if (pilha->tam > 0 && pont->veiculo->direcao == "Hidráulica") {
+          insere_inicio(pilha, pont->veiculo);
+        }else if(pilha->tam > 0 && pont->veiculo->direcao == "Elétrica"){
+          remove_inicio(pilha);
+        }
+        // atualizando a fila
+        if (fila->tam > 0 && pont->veiculo->cambio == "Automática") {
+          insere_fim(fila, pont->veiculo);
+        }else if(fila->tam > 0 && pont->veiculo->cambio == "Manual"){
+          remove_inicio(fila);
+        }
+        delete (pont->veiculo);
+        delete (pont);
+        return 1;
       } else {
-        ant->prox = pont->prox;
+        cout << endl << "DIGITE APENAS '1' OU '0'" << endl;
       }
-      // atualizando a pilha
-      if (pilha->prox != NULL && pont->veiculo->direcao == "Hidráulica") {
-        no *pont2 = pilha->prox;
-        if (pilha->prox->veiculo == pont->veiculo) {
-          pilha->prox = pont2->prox;
-          delete (pont2);
-        } else {
-          for (; pont2->prox->veiculo != pont->veiculo && pont2->prox != NULL;
-               pont2 = pont2->prox) {
-          }
-          no *aux = pont2->prox;
-          pont2->prox = aux->prox;
-          delete (aux);
-          pilha->tam = pilha->tam - 1;
-        }
-      }
-      // atualizando a fila
-      if (fila->prox != NULL && pont->veiculo->cambio == "Automático") {
-        no *pont2 = fila->prox;
-        if (fila->prox->veiculo == pont->veiculo) {
-          fila->prox = pont2->prox;
-          delete (pont2);
-        } else {
-          for (; pont2->prox->veiculo != pont->veiculo && pont2->prox != NULL;
-               pont2 = pont2->prox) {
-          }
-          no *aux = pont2->prox;
-          pont2->prox = aux->prox;
-          delete (aux);
-          fila->tam = fila->tam - 1;
-        }
-      }
-      delete (pont->veiculo);
-      delete (pont);
-      return 1;
-    } else {
-      cout << endl << "DIGITE APENAS '1' OU '0'" << endl;
-    }
-    }while(opc != 0 && opc != 1);
+    } while (opc != 0 && opc != 1);
   }
 }
 
@@ -267,8 +257,9 @@ int make_pilha(cabeca *pilha, cabeca *bd) {
   if (bd->prox != NULL) {
     for (no *pont = bd->prox; pont != NULL; pont = pont->prox) {
       if (pont->veiculo->direcao == "Hidráulica") {
-        insere_pilha(pilha, pont->veiculo);
-        pilha->tam = pilha->tam + 1;
+        insere_inicio(pilha, pont->veiculo);
+      } else if (pont->veiculo->direcao == "Elétrica" && pilha->tam > 0) {
+        delete (remove_inicio(pilha));
       }
     }
     if (pilha->tam == 0) { // significa que não há pelo menos um veículo com
@@ -285,8 +276,9 @@ int make_fila(cabeca *fila, cabeca *bd) {
   if (bd->prox != NULL) {
     for (; pont != NULL; pont = pont->prox) {
       if (pont->veiculo->cambio == "Automático") {
-        insere_fila(fila, pont->veiculo);
-        fila->tam = fila->tam + 1;
+        insere_fim(fila, pont->veiculo);
+      } else if (pont->veiculo->cambio == "Manual" && fila->tam > 0) {
+        remove_inicio(fila);
       }
     }
     if (fila->tam == 0) { // significa que não há pelo menos um veículo com
@@ -393,8 +385,8 @@ int main() {
                   "--"
                << endl
                << "[0] - TODOS OS VEÍCULOS" << endl
-               << "[1] - VEÍCULOS COM DIREÇÂO HIDRÁULICA" << endl
-               << "[2] - VEÍCULOS COM CÂMBIO AUTOMÁTICO" << endl
+               << "[1] - PILHA" << endl
+               << "[2] - FILA" << endl
                << "------------------------------------------------------------"
                   "--"
                << endl
