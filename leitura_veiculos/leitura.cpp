@@ -111,30 +111,38 @@ int mostrar(cabeca *bd) {
 void ordena_por_placa(cabeca *bd) {
   cabeca *bd2 = inicia_lista();
   bd2->prox = new no;
+  bd2-> prox -> prox = NULL;
   bd2->tam = 1;
-  no *pont2 = bd2->prox;
+  no *pont2;
   no *ant;
-  Tveiculo *aux1, *aux2;
   bd2->prox->veiculo = bd->prox->veiculo;
-  no *pont3 = bd2->prox;
-  for (no *pont1 = bd->prox; pont1 != NULL; pont1 = pont1->prox) {
+  no *novo;
+  for (no *pont1 = bd-> prox -> prox; pont1 != NULL; pont1 = pont1->prox) {
+    novo = new no;
+    novo-> prox = NULL;
+    novo->veiculo = pont1 -> veiculo;
     ant = NULL;
-    if (pont1->veiculo->placa < bd2->prox->veiculo->placa) {
+    for(pont2 = bd2 -> prox; pont2 -> veiculo -> placa < pont1 -> veiculo -> placa && pont2 != NULL; ant = pont2, pont2 = pont2 -> prox){
+        if(pont2 -> prox == NULL){
+            ant = pont2;
+            pont2 = pont2 -> prox;
+            break;
+        }
     }
-    for (pont2 = bd2->prox; pont2->prox != NULL &&
-                            pont2->prox->veiculo->placa < pont1->veiculo->placa;
-         ant = pont2, pont2 = pont2->prox) {
+    if(ant == NULL){
+        novo -> prox = bd2 -> prox;
+        bd2 -> prox = novo;
+    }else{
+        novo -> prox = ant -> prox;
+        ant -> prox = novo;
     }
-    pont3->prox = new no;
-    pont3 = pont3->prox;
     bd2->tam = bd2->tam + 1;
   }
   mostrar(bd2);
   encerra_lista(bd2);
 }
 // FUNÇÃO QUE VAI TENTAR INSERIR UM NOVO VEÍCULO AO BANCO DE DADOS
-void insercao_veiculo(cabeca *bd, cabeca *pilha, cabeca *fila,
-                      Tveiculo *veiculo) {
+void insercao_veiculo(cabeca *bd, cabeca *pilha, cabeca *fila, Tveiculo *veiculo) {
   no *novo = new no;
   novo->veiculo = veiculo;
   novo->prox = NULL;
@@ -147,17 +155,21 @@ void insercao_veiculo(cabeca *bd, cabeca *pilha, cabeca *fila,
     pont->prox = novo;
     bd->tam = bd->tam + 1;
   }
+  //SE O ELEMENTO INSERIDO TIVER DIREÇÃO HIDRÁULICA EU INSIRO-O, MAS SE ELE TIVER DIREÇÃO ELÉTRICA REMOVO O ÚLTIMO INSERIDO NA PILHA
   if (veiculo->direcao == "Hidráulica") {
     insere_inicio(pilha, veiculo);
+  }else if(veiculo->direcao == "Elétrica"){
+    remove_inicio(pilha);
   }
+  //SE O ELEMENTO INSERIDO TIVER CÂMBIO AUTOMÁTICO EU INSIRO-O, MAS SE ELE TIVER CÂMBIO MANUAL REMOVO O ÚLTIMO INSERIDO NA FILA
   if (veiculo->cambio == "Automático") {
     insere_fim(fila, veiculo);
+  }else if(veiculo->cambio == "Manual"){
+    remove_inicio(fila);
   }
 }
-// FUNÇÃO QUE VAI TENTAR BUSCAR UM ELEMENTO E, SE ACHAR, PERGUNTAR SE DEVE
-// REMOVER
-int busca_e_remocao_de_veiculo(cabeca *bd, cabeca *pilha, cabeca *fila,
-                               string placa) {
+// FUNÇÃO QUE VAI TENTAR BUSCAR UM ELEMENTO E, SE ACHAR, PERGUNTAR SE DEVE REMOVER
+int busca_e_remocao_de_veiculo(cabeca *bd, cabeca * pilha, cabeca * fila, string placa) {
   int opc;
   if (bd->prox == NULL) {
     cout << endl << "BANCO DE DADOS VAZIO!" << endl;
@@ -182,17 +194,31 @@ int busca_e_remocao_de_veiculo(cabeca *bd, cabeca *pilha, cabeca *fila,
         } else {
           ant->prox = pont->prox;
         }
-        // atualizando a pilha
-        if (pilha->tam > 0 && pont->veiculo->direcao == "Hidráulica") {
-          insere_inicio(pilha, pont->veiculo);
-        }else if(pilha->tam > 0 && pont->veiculo->direcao == "Elétrica"){
-          remove_inicio(pilha);
+        //ATUALIZANDO A PILHA
+        if(pont->veiculo->direcao == "Hidráulica"){
+            no* pont2;
+            ant = NULL;
+            for(pont2 = pilha -> prox; pont2 -> veiculo != pont -> veiculo; ant = pont2, pont2 = pont2 -> prox){
+            }
+            if(ant == NULL){
+                pilha -> prox = pont2 -> prox;
+            }else{
+                ant -> prox = pont2 -> prox;
+            }
+            delete(pont2);
         }
-        // atualizando a fila
-        if (fila->tam > 0 && pont->veiculo->cambio == "Automática") {
-          insere_fim(fila, pont->veiculo);
-        }else if(fila->tam > 0 && pont->veiculo->cambio == "Manual"){
-          remove_inicio(fila);
+        //ATUALIZANDO A FILA
+        if(pont -> veiculo -> cambio == "Automático"){
+            no* pont2;
+            ant = NULL;
+            for(pont2 = fila -> prox; pont2 -> veiculo != pont -> veiculo; ant = pont2, pont2 = pont2 -> prox){
+            }
+            if(ant == NULL){
+                fila -> prox = pont2 -> prox;
+            }else{
+                ant -> prox = pont2 -> prox;
+            }
+            delete(pont2);
         }
         delete (pont->veiculo);
         delete (pont);
@@ -203,20 +229,12 @@ int busca_e_remocao_de_veiculo(cabeca *bd, cabeca *pilha, cabeca *fila,
     } while (opc != 0 && opc != 1);
   }
 }
-
 // FUNÇÃO PARA SALVAR OS DADOS NO ARQUIVO TEXTO
 void salvar(cabeca *bd) {
   int opc, i = 0;
   do {
-    cout << "--------------------------------------------------------------"
-         << endl
-
-         << "[1] - SALVAR" << endl
-         << "[2] - NÃO SALVAR" << endl
-         << "--------------------------------------------------------------"
-         << endl
-
-         << "ESCOLHA UMA OPÇÃO: ";
+    cout << "--------------------------------------------------------------" << endl << "[1] - SALVAR" << endl << "[2] - NÃO SALVAR" << endl
+         << "--------------------------------------------------------------" << endl << "ESCOLHA UMA OPÇÃO: ";
     cin >> opc;
     if (opc == 1) {
       ofstream myfile("BD_veiculos.txt");
