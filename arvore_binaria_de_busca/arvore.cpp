@@ -1,4 +1,11 @@
-#include "arvore.h"
+#include <iostream>
+using namespace std;
+
+typedef struct tNode_{
+    int valor;
+    tNode_ * esquerda;
+    tNode_ * direita;
+}tNode;
 
 tNode * busca_pre_ordem(tNode * pai, int valor){
     if(pai != NULL){
@@ -6,17 +13,17 @@ tNode * busca_pre_ordem(tNode * pai, int valor){
             return pai;
         }
         if(pai->esquerda != NULL){
-            busca_pre_ordem(pai->esquerda);
+            busca_pre_ordem(pai->esquerda, valor);
         }
         if(pai->direita != NULL){
-            busca_pre_ordem(pai->direita);
+            busca_pre_ordem(pai->direita, valor);
         }
     }else{
         return NULL;
     }
 }
 
-void * imprime_pre_ordem(tNode * pai){
+void imprime_pre_ordem(tNode * pai){
     if(pai != NULL){
         cout << pai -> valor << " ";
         if(pai->esquerda != NULL){
@@ -27,7 +34,7 @@ void * imprime_pre_ordem(tNode * pai){
         }
     }
 }
-void * imprime_in_ordem(tNode * pai){
+void imprime_in_ordem(tNode * pai){
     if(pai != NULL){
         if(pai->esquerda != NULL){
             imprime_in_ordem(pai->esquerda);
@@ -39,7 +46,7 @@ void * imprime_in_ordem(tNode * pai){
     }
 }
 
-void * imprime_pos_ordem(tNode * pai){
+void imprime_pos_ordem(tNode * pai){
     if(pai != NULL){
         if(pai->esquerda != NULL){
             imprime_pos_ordem(pai->esquerda);
@@ -52,17 +59,19 @@ void * imprime_pos_ordem(tNode * pai){
 }
 
 tNode * inicia_arvore(){
-    tNode novo = new tNode;
+    tNode *novo = new tNode;
+    novo -> esquerda = NULL;
+    novo -> direita = NULL;
     return novo;
 }
 
-void encerra_arvore(){
+void encerra_arvore(tNode *pai){
     if(pai != NULL){
         if(pai->esquerda != NULL){
-            pos_ordem(pai->esquerda);
+            encerra_arvore(pai->esquerda);
         }
         if(pai->direita != NULL){
-            pos_ordem(pai->direita);
+            encerra_arvore(pai->direita);
         }
         delete(pai);
     }
@@ -70,12 +79,24 @@ void encerra_arvore(){
 
 void insere(tNode * pai, int valor){
     if(pai != NULL){
-        if(pai->esquerda != NULL && pai -> valor > valor){
-            insere(pai->esquerda, valor);
+        if(pai -> valor > valor){
+            if(pai->esquerda != NULL){
+                insere(pai->esquerda, valor);
+            }else{
+                pai -> esquerda = inicia_arvore();
+                pai -> esquerda -> valor = valor;
+            }
+        }else{
+            if(pai->direita != NULL){
+                insere(pai->direita, valor);
+            }else{
+                pai -> direita = inicia_arvore();
+                pai -> direita -> valor = valor;
+            }
         }
-        if(pai->direita != NULL && pai -> valor < valor){
-            insere(pai->direita, valor);
-        }
+    }else{
+        pai = inicia_arvore();
+        pai -> valor = valor;
     }
 }
 
