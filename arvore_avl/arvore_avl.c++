@@ -27,6 +27,18 @@ no* rotacao_simples_esquerda(no* pai){
     return aux;
 }
 
+no* rotacao_dupla_direita(no* pai){
+    pai -> dir -> esq -> dir = pai -> dir;
+    pai -> dir = pai -> dir -> esq;
+    return rotacao_simples_direita(pai);
+}
+
+no* rotacao_dupla_esquerda(no* pai){
+    pai -> esq -> dir -> esq = pai -> esq;
+    pai -> esq = pai -> esq -> dir;
+    return rotacao_simples_esquerda(pai);
+}
+
 int fb(no* raiz, int * alt1, int * alt2){
     
 }
@@ -42,7 +54,7 @@ no* insere_arvore_avl(no* raiz, int valor){
     }else{
         if(raiz -> valor > valor){
             if(raiz -> esq != NULL){
-                insere_arvore_avl(raiz -> esq, valor);
+                raiz -> esq = insere_arvore_avl(raiz -> esq, valor);
             }else{
                 no* novo = new no;
                 novo -> valor = valor;
@@ -52,7 +64,7 @@ no* insere_arvore_avl(no* raiz, int valor){
             }
         }else if(raiz -> valor < valor){
             if(raiz -> dir != NULL){
-                insere_arvore_avl(raiz -> dir, valor);
+                raiz -> dir = insere_arvore_avl(raiz -> dir, valor);
             }else{
                 no* novo = new no;
                 novo -> valor = valor;
@@ -60,12 +72,12 @@ no* insere_arvore_avl(no* raiz, int valor){
                 novo -> dir = NULL;
                 raiz -> esq = novo;
             }
-        }else{
-            return NULL;
         }
     }
     int alt1 = 0, alt2 = 0;
-    fb(raiz, &alt1, &alt2);
+    if(fb(raiz, &alt1, &alt2) == 2 || fb(raiz, &alt1, &alt2) == -2){
+
+    }
 }
 
 
