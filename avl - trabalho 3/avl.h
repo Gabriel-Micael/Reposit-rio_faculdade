@@ -1,5 +1,9 @@
 #include <iostream>
+
 using namespace std;
+
+#ifndef AVL_H
+#define AVL_H
 
 typedef struct{
   string modelo;
@@ -19,8 +23,7 @@ typedef struct{
 
 typedef struct aux {
     Tveiculo *veiculo;
-    struct aux *esq;
-    struct aux *dir;
+    struct aux *esq, *dir;
     int bal; // fator de balanceamento (0, -1 ou +1) => alt. direita - alt. esquerda
 } NO, *PONT;
 
@@ -34,24 +37,23 @@ typedef struct cabeca{
   int tam;
 }cabeca;
 
-#ifndef AVL_H
-#define AVL_H
-
-void inicializar(PONT * raiz);
+int fb(PONT no);
+void inicializar(PONT *raiz);
 void destruirArvore(PONT * raiz);
 void destruirAux(PONT subRaiz);
-void rotacaoR2(PONT *p);
-void rotacaoL2(PONT *p);
-bool excluirAVL(PONT* raiz, Tveiculo veiculo, bool* alterou);
 PONT buscaBinaria(Tveiculo veiculo, PONT raiz);
-void inserirAVL(PONT* pp, Tveiculo veiculo, bool* alterou);
-PONT rotacaoR(PONT p);
-PONT rotacaoL(PONT p);
 void exibirArvorePosOrdem(PONT raiz);
 void exibirArvorePreOrdem(PONT raiz);
 void exibirArvoreEmOrdem(PONT raiz);
 int altura(PONT p);
 int max(int a, int b);
 PONT criarNovoNo(Tveiculo veiculo);
-PONT maiorAEsquerda(PONT p, PONT *ant);
-#endif
+PONT rotacao_simples_a_esquerda(PONT no);
+PONT rotacao_simples_a_direita(PONT no);
+PONT rotacao_direita_esquerda(PONT no);
+PONT rotacao_esquerda_direita(PONT no);
+PONT balancear(PONT no);
+PONT insere_avl(PONT no, Tveiculo veiculo);
+PONT remove_avl(PONT no, Tveiculo veiculo);
+
+#endif //AVL_H
