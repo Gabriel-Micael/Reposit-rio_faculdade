@@ -1,6 +1,4 @@
-#include <iostream>
 #include "avl.h"
-using namespace std;
 
 #ifndef LISTAENC_H
 #define LISTAENC_H
@@ -12,4 +10,5 @@ void salvar(cabeca *bd);
 int busca_e_remocao_de_veiculo(cabeca *bd, string placa);
 void insercao_veiculo(cabeca *bd, Tveiculo *veiculo);
 int mostrar(cabeca *bd);
+void read_file(Tveiculo *veiculo, string nome_do_arquivo);
 #endif
