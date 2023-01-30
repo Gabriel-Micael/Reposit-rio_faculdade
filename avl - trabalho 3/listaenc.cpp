@@ -2,6 +2,32 @@
 #include "avl.h"
 #include <fstream>
 
+//FUNÇÃO PARA FAZER A LEITURA DE UMA LINHA DO ARQUIVO
+void read_file(Tveiculo *veiculo, string nome_do_arquivo){
+    ifstream myfile(nome_do_arquivo);
+    if (myfile.is_open()) {
+      while (!myfile.eof()) {
+        veiculo = new Tveiculo;
+        myfile >> veiculo->modelo;
+        myfile >> veiculo->marca;
+        myfile >> veiculo->tipo;
+        myfile >> veiculo->ano;
+        myfile >> veiculo->km;
+        myfile >> veiculo->potencia;
+        myfile >> veiculo->combustivel;
+        myfile >> veiculo->cambio;
+        myfile >> veiculo->direcao;
+        myfile >> veiculo->cor;
+        myfile >> veiculo->porta;
+        myfile >> veiculo->placa;
+        myfile >> veiculo->valor;
+      }
+      myfile.close();
+    } else {
+      cout << "Unable to open file\n";
+    }
+}
+
 // FUNÇÃO PARA IMPRIMIR O VETOR DE STRUCT NA TELA
 int mostrar(cabeca *bd) {
   if (bd->prox != NULL) {
