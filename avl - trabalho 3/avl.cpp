@@ -1,25 +1,123 @@
 #include "avl.h"
-#include <malloc.h>
 
-PONT criarNovoNo(Tveiculo veiuclo){
-    PONT novoNo = (PONT)malloc(sizeof(NO));
+PONT criarNovoNo(Tveiculo veiculo){
+    PONT novoNo = new NO;
     novoNo->esq = NULL;
     novoNo->dir = NULL;
-    novoNo->veiculo = NULL;
+    novoNo->veiculo = &veiculo;
     novoNo->bal = 0;
     return novoNo;
 }
 
 int max(int a, int b){
-    if (a>b)
-        return a;
-    return b;
+    return (a>b)? a: b;
 }
 
 int altura(PONT p){
     if (!p)
         return -1;
-    else return 1 + max(altura(p->esq),altura(p->dir));
+    return 1 + max(altura(p->esq),altura(p->dir));
+}
+
+int fb(PONT no){
+    if(no){
+        return (altura(no->dir) - altura(no->esq));
+    }
+    return 0;
+}
+
+PONT rotacao_simples_a_esquerda(PONT no){
+    PONT y, f;
+    y = no -> dir;
+    f = y -> esq;
+    y -> esq = no;
+    no -> dir = f;
+    no -> bal = max(altura(no -> esq), altura(no -> dir)) + 1;
+    y -> bal = max(altura(y -> esq), altura(y -> dir)) + 1;
+    return y;
+}
+
+PONT rotacao_simples_a_direita(PONT no){
+    PONT y, f;
+    y = no -> esq;
+    f = y -> dir;
+    y -> dir = no;
+    no -> esq = f;
+    no -> bal = max(altura(no -> esq), altura(no -> dir)) + 1;
+    y -> bal = max(altura(y -> esq), altura(y -> dir)) + 1;
+    return y;
+}
+
+PONT rotacao_direita_esquerda(PONT no){
+    no -> dir = rotacao_simples_a_direita(no->dir);
+    return rotacao_simples_a_esquerda(no);
+}
+
+PONT rotacao_esquerda_direita(PONT no){
+    no -> esq = rotacao_simples_a_esquerda(no->esq);
+    return rotacao_simples_a_direita(no);
+}
+
+PONT insere_avl(PONT no, Tveiculo veiculo){
+    cout << "chegou até aqui" << endl;
+    if(no == NULL){
+        cout << "chegou até aqui" << endl;
+        return criarNovoNo(veiculo);
+        cout << "chegou até aqui" << endl;
+    }else{
+        if(veiculo.placa < no->veiculo->placa)
+            no -> esq =  insere_avl(no -> esq, veiculo);
+        else if(veiculo.placa > no->veiculo->placa)
+            no -> dir =  insere_avl(no -> dir, veiculo);
+        else
+            return NULL;
+    }
+    no -> bal = max(altura(no -> esq), altura(no -> dir)) + 1;
+    no = balancear(no);
+}
+
+PONT remove_avl(PONT no, string placa){
+    if(!no)
+        return NULL;
+    else
+        if(no -> veiculo -> placa == placa)
+            if(no -> esq == NULL && no -> dir == NULL)
+                return no;
+            else
+                if(no -> esq != NULL && no -> dir != NULL){
+                    PONT percorre = no -> esq;
+                    while(percorre -> dir != NULL)
+                        percorre = percorre -> dir;
+                    no -> veiculo = percorre -> veiculo;
+                    no -> esq = remove_avl(no -> esq, placa);
+                    return no;
+                }
+                else{
+                    PONT percorre;
+                    if(no -> esq != NULL){}
+                       // percorre = no -> esq;
+                    //else
+                        //percorre = no -> esq;
+                }
+        else{
+            if(placa < no -> veiculo -> placa)
+                no -> esq = remove_avl(no -> esq, placa);
+            else
+                no -> esq = remove_avl(no -> esq, placa);
+        }
+}
+
+PONT balancear(PONT no){
+    int fatorbalanciamento = fb(no);
+    if(fatorbalanciamento < -1 && fb(no -> dir) <= 0)
+        no = rotacao_simples_a_esquerda(no);
+    else if(fatorbalanciamento > -1 && fb(no -> esq) >= 0)
+        no = rotacao_simples_a_direita(no);
+    else if(fatorbalanciamento > -1 && fb(no -> esq) < 0)
+        no = rotacao_esquerda_direita(no);
+    else if(fatorbalanciamento < -1 && fb(no -> dir) > 0)
+        no = rotacao_direita_esquerda(no);
+    return no;
 }
 
 /* Exibe arvore Em Ordem.         */
@@ -27,7 +125,7 @@ void exibirArvoreEmOrdem(PONT raiz){
     if (raiz == NULL)
         return;
     exibirArvoreEmOrdem(raiz->esq);
-    cout << raiz->veiculo->modelo;
+    /*cout << raiz->veiculo->modelo;
     cout << raiz->veiculo->marca;
     cout << raiz->veiculo->tipo;
     cout << raiz->veiculo->ano;
@@ -37,17 +135,18 @@ void exibirArvoreEmOrdem(PONT raiz){
     cout << raiz->veiculo->cambio;
     cout << raiz->veiculo->direcao;
     cout << raiz->veiculo->cor;
-    cout << raiz->veiculo->porta;
-    cout << raiz->veiculo->placa;
-    cout << raiz->veiculo->valor;
+    cout << raiz->veiculo->porta;*/
+    cout << "(" << raiz->veiculo->placa;
+    //cout << raiz->veiculo->valor;
     exibirArvoreEmOrdem(raiz->dir);
+    cout << ")";
 }
 
 /* Exibe arvore Pre Ordem.         */
 void exibirArvorePreOrdem(PONT raiz){
     if (raiz == NULL)
         return;
-    cout << raiz->veiculo->modelo;
+    /*cout << raiz->veiculo->modelo;
     cout << raiz->veiculo->marca;
     cout << raiz->veiculo->tipo;
     cout << raiz->veiculo->ano;
@@ -57,9 +156,9 @@ void exibirArvorePreOrdem(PONT raiz){
     cout << raiz->veiculo->cambio;
     cout << raiz->veiculo->direcao;
     cout << raiz->veiculo->cor;
-    cout << raiz->veiculo->porta;
-    cout << raiz->veiculo->placa;
-    cout << raiz->veiculo->valor;
+    cout << raiz->veiculo->porta;*/
+    cout << raiz->veiculo->placa << " ";
+    //cout << raiz->veiculo->valor;
     exibirArvorePreOrdem(raiz->esq);
     exibirArvorePreOrdem(raiz->dir);
 }
@@ -70,7 +169,7 @@ void exibirArvorePosOrdem(PONT raiz){
         return;
     exibirArvorePreOrdem(raiz->esq);
     exibirArvorePreOrdem(raiz->dir);
-    cout << raiz->veiculo->modelo;
+    /*cout << raiz->veiculo->modelo;
     cout << raiz->veiculo->marca;
     cout << raiz->veiculo->tipo;
     cout << raiz->veiculo->ano;
@@ -80,129 +179,10 @@ void exibirArvorePosOrdem(PONT raiz){
     cout << raiz->veiculo->cambio;
     cout << raiz->veiculo->direcao;
     cout << raiz->veiculo->cor;
-    cout << raiz->veiculo->porta;
-    cout << raiz->veiculo->placa;
-    cout << raiz->veiculo->valor;
-}
-
-PONT rotacaoL(PONT p){
-    cout << "Rotacao a esquerda, problema no no: " << p->veiculo << endl;
-    PONT u, v;
-    u = p->esq;
-    if(u->bal == -1) {   // LL
-        p->esq = u->dir;
-        u->dir = p;
-        p->bal = 0;
-        u->bal = 0;
-        return u;
-    }
-    else 
-        if (u->bal == 1) {  // LR
-            v = u->dir;
-            u->dir = v->esq;
-            v->esq = u;
-            p->esq = v->dir;
-            v->dir = p;
-            if(v->bal == -1)
-                p->bal = 1;
-            else
-                p->bal = 0;
-            if(v->bal == 1)
-                u->bal = -1;
-            else
-                u->bal = 0;
-            v->bal = 0;
-            return v;
-	}else{   // caso necessario apenas para a exclusao (u->bal == 0)
-            p->esq = u->dir;
-            u->dir = p;
-            // p->bal = -1;    desnecessario pois o balanceamento de p nao chegou a ser mudado para -2
-            u->bal = 1;
-            return u;
-	}
-}
-
-PONT rotacaoR(PONT p){
-    cout << "Rotacao a direita, problema no no: " << p->veiculo << endl;
-    PONT u, v;
-    u = p->dir;
-    if(u->bal == 1) {   // RR
-        p->dir = u->esq;
-        u->esq = p;
-        p->bal = 0;
-        u->bal = 0;
-	return u;
-    } 
-    else 
-        if (u->bal == -1){  // RL
-            v = u->esq;
-            u->esq = v->dir;
-            v->dir = u;
-            p->dir = v->esq;
-            v->esq = p;
-            if(v->bal == 1)
-                p->bal = -1;
-            else 
-                p->bal = 0;
-            if(v->bal == -1)
-                u->bal = 1;
-            else
-                u->bal = 0;
-            v->bal = 0;
-            return v;
-	}else{   // caso necessario apenas para a exclusao (u->bal == 0)
-            p->dir = u->esq;
-            u->esq = p;
-            u->bal = -1;
-            // p->bal = 1;    desnecessario pois o balanceamento de p nao chegou a ser mudado para 2
-            return u;	
-	}
-}
-
-void inserirAVL(PONT* pp, Tveiculo veiculo, bool* alterou){
-    PONT p = *pp;
-    if(!p){
-        *pp = criarNovoNo(veiculo);
-        *alterou = true;
-    } else {
-        if(&veiculo == p->veiculo)
-            *alterou = false;
-        else
-            if(&veiculo <= p->veiculo
-      ) {
-                inserirAVL(&(p->esq), veiculo, alterou);
-                if(*alterou)
-                    switch (p->bal) {
-                        case 1 :
-                            p->bal = 0;
-                            *alterou = false;
-                            break;
-			case 0 : 
-                            p->bal = -1;
-                            break;
-			case -1:
-                            *pp = rotacaoL(p);
-                            *alterou = false;
-                            break;
-			}
-		} else {
-                    inserirAVL(&(p->dir), veiculo, alterou);
-                    if(*alterou)
-                        switch (p->bal) {
-                            case -1:
-                                p->bal = 0;
-				*alterou = false;
-                                break;
-                            case 0 :
-                                p->bal = 1;
-				break;
-                            case 1 :
-                                *pp = rotacaoR(p);
-				*alterou = false;
-				break;
-			}
-		}
-	}
+    cout << raiz->veiculo->porta;*/
+    cout << "(" << raiz->veiculo->placa;
+    //cout << raiz->veiculo->valor;
+    cout << ")";
 }
 
 PONT buscaBinaria(Tveiculo *veiculo, PONT raiz){
@@ -212,143 +192,15 @@ PONT buscaBinaria(Tveiculo *veiculo, PONT raiz){
         return raiz;
     if (raiz->veiculo->placa < veiculo->placa) 
         return buscaBinaria(veiculo,raiz->dir);
-    return buscaBinaria(veiculo,raiz->esq);
+    return buscaBinaria(veiculo,raiz->esq); 
 }  
-
-bool excluirAVL(PONT* raiz, Tveiculo *veiculo, bool* alterou){
-    PONT atual = *raiz;
-    if (!atual) {
-        *alterou = false;
-        return false;
-    }
-    if (atual->veiculo == veiculo){
-        PONT substituto, pai_substituto;
-        if(!atual->esq || !atual->dir) { // tem zero ou um filho
-            if(atual->esq)
-                substituto = atual->esq;
-            else 
-                substituto = atual->dir;
-            *raiz = substituto;
-            free(atual);
-            *alterou = true;
-            return true;
-        }
-        else {   // tem dois filhos
-            substituto = maiorAEsquerda(atual,&pai_substituto);
-            atual->veiculo
-      = substituto->veiculo
-      ;
-            veiculo = substituto->veiculo
-      ; // continua o codigo excluindo o substituto
-        }
-    }
-    bool res;
-    if (veiculo > atual->veiculo) {
-        res = excluirAVL(&(atual->dir), veiculo, alterou);
-        cout << "Excluir recursivo a direita:" << atual->veiculo << " (" << atual->bal << ")" << endl; 
-        if (*alterou){
-            switch (atual->bal){
-                case 1:
-                    atual->bal = 0;
-                    return true;
-                case 0:
-                    atual->bal = -1;
-                    *alterou = false;
-                    return true;
-                case -1:
-                    *raiz = rotacaoL(atual);
-                    if (atual->bal != 0)
-                        *alterou = false;
-                    return true;
-            }
-        }
-    }else{
-        res = excluirAVL(&(atual->esq), veiculo, alterou);
-        cout << "Excluir recursivo a esquerda: " << atual->veiculo << "(" << atual->bal << ")" << endl; 
-        if (*alterou){
-            switch (atual->bal){
-                case -1:
-                    atual->bal = 0;
-                    return true;
-                case 0:
-                    atual->bal = 1;
-                    *alterou = false;
-                    return true;
-                case 1:
-                    *raiz = rotacaoR(atual);
-                    if (atual->bal != 0)
-                        *alterou = false;
-                    return true;
-            }
-        }
-    }
-    return res;
-}
-
-/* Rotações à direita (LL e LR) */
-void rotacaoL2(PONT *p) {
-    cout << "Rotacao a esquerda, problema no no: " << (*p)->veiculo << endl;
-    PONT u, v;
-    u = (*p)->esq;
-    if (u->bal == -1) { // LL
-        (*p)->esq = u->dir;
-        u->dir = *p;
-        (*p)->bal = 0;
-        *p = u;
-    } else { // LR
-        v = u->dir;
-        u->dir = v->esq;
-        v->esq = u;
-        (*p)->esq = v->dir;
-        v->dir = *p;
-        if (v->bal == -1)
-            (*p)->bal = 1;
-        else 
-            (*p)->bal = 0;
-        if (v->bal == 1)
-            u->bal = -1;
-        else 
-            u->bal = 0;
-        *p = v;
-    }
-    (*p)->bal = 0; // balanço final da raiz (p) da subarvore
-}
-
-/* Rotações à esquerda (RR e RL)    */
-void rotacaoR2(PONT *p) {
-    cout << "Rotacao a direita, problema no no: " << (*p)->veiculo << endl;
-    PONT u, v;
-    u = (*p)->dir;
-    if (u->bal == 1) { // RR
-        (*p)->dir = u->esq;
-        u->esq = *p;
-        (*p)->bal = 0;
-        *p = u;
-    } else { // RL
-        v = u->esq;
-        u->esq = v->dir;
-        v->dir = u;
-        (*p)->dir = v->esq;
-        v->esq = *p;
-        if (v->bal == 1)
-            (*p)->bal = -1;
-        else 
-            (*p)->bal = 0;
-        if (v->bal == -1)
-            u->bal = 1;
-        else 
-            u->bal = 0;
-        *p = v;
-    }
-    (*p)->bal = 0; // balanço final da raiz (p) da subarvore
-}
 
 /* funcao auxiliar na destruicao (liberacao da memoria) de uma arvore */
 void destruirAux(PONT subRaiz){
     if (subRaiz){
 	destruirAux(subRaiz->esq);
 	destruirAux(subRaiz->dir);
-	free(subRaiz);
+	delete(subRaiz);
     }
 }
 
@@ -360,14 +212,4 @@ void destruirArvore(PONT * raiz){
 
 void inicializar(PONT * raiz){
     *raiz = NULL;
-}
-
-PONT maiorAEsquerda(PONT p, PONT *ant){
-    *ant = p;
-    p = p->esq;
-    while (p->dir) {
-        *ant = p;
-        p = p->dir;
-    }
-    return(p);
 }
