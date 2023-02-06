@@ -1,51 +1,23 @@
 #include "binary.h"
 
-no_binary * criarNovoNo_binary(Tveiculo *veiculo){
-    no_binary *novo = new no_binary;
-    novo -> dir = NULL;
-    novo -> esq = NULL;
-    novo -> veiculo = veiculo;
-    return novo;
-}
-
-void printBinaryTree(no_binary *node, int level)
-{
-    if (node != NULL)
-    {
-        printBinaryTree(node->dir, level + 1);
-        for (int i = 0; i < level; i++)
-            cout << "     ";
-        cout << node->veiculo->placa << endl;
-        printBinaryTree(node->esq, level + 1);
-    }
-}
-
-no_binary * insert_tree_binary(Tveiculo * veiculo, no_binary * no){
+PONT insert_tree_binary(PONT no, Tveiculo * veiculo){
     if(!no){
-        return criarNovoNo_binary(veiculo);
+        return criarNovoNo(veiculo);
     }else{
         if(veiculo->placa < no->veiculo->placa){
-            no -> esq =  insert_tree_binary(veiculo, no -> esq);
+            no -> esq =  insere_avl(no -> esq, veiculo);
         }
         else if(veiculo->placa > no->veiculo->placa){
-            no -> dir =  insert_tree_binary(veiculo, no -> dir);
+            no -> dir =  insere_avl(no -> dir, veiculo);
         }else{
             cout << endl << "ELEMENTO COM PLACA " << veiculo->placa << "JÁ EXISTE!" << endl;
         }
     }
+    no -> bal = max(altura(no -> esq), altura(no -> dir)) + 1;
     return no;
 }
 
-void destruirArvoreBinary(no_binary * no){
-    if(!no){
-        return;
-    }
-    destruirArvoreBinary(no->esq);
-    destruirArvoreBinary(no->dir);
-    delete(no);
-}
-
-no_binary * remove_binary(no_binary *no, string placa){
+PONT remove_binary(PONT no, string placa){
     if(!no){
         return NULL;
     }else{
@@ -56,7 +28,7 @@ no_binary * remove_binary(no_binary *no, string placa){
             }
             else{
                 if(no -> esq != NULL && no -> dir != NULL){
-                    no_binary *percorre = no -> esq, *aux = new no_binary;
+                    PONT percorre = no -> esq, aux = new NO;
                     while(percorre -> dir != NULL){
                         percorre = percorre -> dir;
                     }
@@ -67,7 +39,7 @@ no_binary * remove_binary(no_binary *no, string placa){
                     return no;
                 }
                 else{
-                    no_binary *percorre;
+                    PONT percorre;
                     if(no -> esq != NULL){
                         percorre = no -> esq;
                     }
