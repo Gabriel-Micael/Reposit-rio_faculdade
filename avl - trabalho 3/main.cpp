@@ -15,7 +15,7 @@ using namespace std;
 
 int main() {
   cabeca *bd = inicia_lista();
-  no_binary * treebinary = NULL;
+  PONT treebinary = NULL;
   PONT treeAVL = NULL;
   ifstream myfile("BD_veiculos.txt");
   if (myfile.is_open()) {
@@ -37,7 +37,7 @@ int main() {
       myfile >> percorre->veiculo->placa;
       myfile >> percorre->veiculo->valor;
       treeAVL = insere_avl(treeAVL, percorre->veiculo);
-      treebinary = insert_tree_binary(percorre->veiculo, treebinary); 
+      treebinary = insert_tree_binary(treebinary, percorre->veiculo); 
       if (!myfile.eof()) {
         percorre->prox = new no;
         percorre = percorre->prox;
@@ -105,7 +105,7 @@ int main() {
         cout << "ENTRADA DE USUÁRIO SIMULADA" << endl;
         insercao_veiculo(bd, inserir);
         treeAVL = insere_avl(treeAVL, inserir);
-        treebinary = insert_tree_binary(inserir, treebinary);
+        treebinary = insert_tree_binary(treebinary, inserir);
         break;
       case 3:
         cout << "DIGITE A PLACA DO VEÍCULO A EXCLUIR: ";
@@ -132,11 +132,9 @@ int main() {
               cout << endl << "LISTA VAZIA" << endl;
             }
           } else if (opc2 == 1) {
-            printBinaryTree(treebinary, 0);
+            printAVLTree(treebinary, 0);
           } else if (opc2 == 2) {
             printAVLTree(treeAVL, 0);
-            cout << endl << "AVL EM PRÉ-ORDEM: ";
-            exibirArvorePreOrdem(treeAVL);
           } else {
             cout << endl
                  << "VALOR INVÁLIDO, DIGITE APENAS '0', '1' OU '2'" << endl;
@@ -150,7 +148,7 @@ int main() {
     } while (opc != 0);
     // LIBERANDO MEMÓRIA USADA
     encerra_lista(bd);
-    destruirArvoreBinary(treebinary);
+    destruirArvore(&treebinary);
     destruirArvore(&treeAVL);
   } else {
     cout << "Unable to open file\n";
