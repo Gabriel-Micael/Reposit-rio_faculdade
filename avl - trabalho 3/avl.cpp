@@ -152,9 +152,10 @@ void exibirArvorePreOrdem(PONT raiz){
     if (raiz == NULL){
         return;
     }
-    cout << raiz->veiculo->placa << " ";
+    cout << "(" << raiz->veiculo->placa;
     exibirArvorePreOrdem(raiz->esq);
     exibirArvorePreOrdem(raiz->dir);
+    cout << ")";
 }
 
 /* Exibe arvore Pos Ordem         */
@@ -188,9 +189,5 @@ void destruirAux(PONT subRaiz){
 /* libera toda memoria de uma arvore e coloca NULL no valor da raiz    */
 void destruirArvore(PONT * raiz){
     destruirAux(*raiz);
-    *raiz = NULL;
-}
-
-void inicializar(PONT * raiz){
     *raiz = NULL;
 }
