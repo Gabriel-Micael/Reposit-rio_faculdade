@@ -1,5 +1,15 @@
 #include "avl.h"
 
+typedef struct no_{
+  Tveiculo *veiculo;
+  no_ * prox;
+}no;
+
+typedef struct cabeca{
+  no * prox;
+  int tam;
+}cabeca;
+
 #ifndef LISTAENC_H
 #define LISTAENC_H
 void encerra_lista(cabeca *bd);
