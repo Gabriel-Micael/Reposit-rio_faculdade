@@ -142,7 +142,7 @@ void printAVLTree(PONT node, int level)
         printAVLTree(node->dir, level + 1);
         for (int i = 0; i < level; i++)
             cout << "     ";
-        cout << node->veiculo->placa << endl;
+        cout << node->veiculo->placa << "(" << node -> bal + 1 << ")" << endl;
         printAVLTree(node->esq, level + 1);
     }
 }
@@ -152,10 +152,9 @@ void exibirArvorePreOrdem(PONT raiz){
     if (raiz == NULL){
         return;
     }
-    cout << "(" << raiz->veiculo->placa;
+    cout << raiz->veiculo->placa << " ";
     exibirArvorePreOrdem(raiz->esq);
     exibirArvorePreOrdem(raiz->dir);
-    cout << ")";
 }
 
 /* Exibe arvore Pos Ordem         */
