@@ -29,7 +29,6 @@ typedef struct aux {
 } NO, *PONT;
 
 int fb(PONT no);
-void inicializar(PONT *raiz);
 void destruirArvore(PONT * raiz);
 void destruirAux(PONT subRaiz);
 PONT buscaBinaria(Tveiculo veiculo, PONT raiz);
@@ -38,7 +37,7 @@ void exibirArvorePreOrdem(PONT raiz);
 void printAVLTree(PONT node, int level);
 int altura(PONT p);
 int max(int a, int b);
-PONT criarNovoNo(Tveiculo veiculo);
+PONT criarNovoNo(Tveiculo *veiculo);
 PONT rotacao_simples_a_esquerda(PONT no);
 PONT rotacao_simples_a_direita(PONT no);
 PONT rotacao_direita_esquerda(PONT no);
