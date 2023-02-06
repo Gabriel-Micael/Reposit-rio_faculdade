@@ -15,10 +15,8 @@ using namespace std;
 
 int main() {
   cabeca *bd = inicia_lista();
-  PONT treebinary;
-  PONT treeAVL;
-  inicializar(&treeAVL);
-  inicializar(&treebinary);
+  no_binary * treebinary = NULL;
+  PONT treeAVL = NULL;
   ifstream myfile("BD_veiculos.txt");
   if (myfile.is_open()) {
     bd->prox = new no;
@@ -38,10 +36,12 @@ int main() {
       myfile >> percorre->veiculo->porta;
       myfile >> percorre->veiculo->placa;
       myfile >> percorre->veiculo->valor;
-      treeAVL = insere_avl(treeAVL, *percorre->veiculo);
+      treeAVL = insere_avl(treeAVL, percorre->veiculo);
+      treebinary = insert_tree_binary(percorre->veiculo, treebinary); 
       if (!myfile.eof()) {
         percorre->prox = new no;
         percorre = percorre->prox;
+        percorre -> prox = NULL;
         percorre->veiculo = new Tveiculo;
       }
       bd->tam = bd->tam + 1;
@@ -54,10 +54,32 @@ int main() {
     // ESTRUTURA PARA GUARDAR AS INFORMAÇÕES DO VEÍCULO NOVO A SER USADO NA SIMULAÇÃO DE ENTRADA
     Tveiculo *inserir;
     // LEITURA DE ARQUIVO SIMULANDO ENTRADA DE USUÁRIO
-    read_file(inserir, "veiculo_novo.txt");
+    //read_file(&inserir, "veiculo_novo.txt");
+    ifstream myfile("veiculo_novo.txt"); 
+    if (myfile.is_open()) {
+      while (!myfile.eof()) {
+        inserir = new Tveiculo;
+        myfile >> inserir->modelo;
+        myfile >> inserir->marca;
+        myfile >> inserir->tipo;
+        myfile >> inserir->ano;
+        myfile >> inserir->km;      //CONSERTAR A FUNÇÂO DE LER ARQUIVO
+        myfile >> inserir->potencia;
+        myfile >> inserir->combustivel;
+        myfile >> inserir->cambio;
+        myfile >> inserir->direcao;
+        myfile >> inserir->cor;
+        myfile >> inserir->porta;
+        myfile >> inserir->placa;
+        myfile >> inserir->valor;
+      }
+      myfile.close();
+    } else {
+      cout << "Unable to open file\n";
+    }
     do {
       // MENU
-      cout << "--------------------------------------------------------------"
+      cout << endl << "--------------------------------------------------------------"
            << endl
            << "[0] - SAIR" << endl
            << "[1] - BUSCAS" << endl
@@ -80,12 +102,18 @@ int main() {
         }
         break;
       case 2:
-      
         cout << "ENTRADA DE USUÁRIO SIMULADA" << endl;
         insercao_veiculo(bd, inserir);
+        treeAVL = insere_avl(treeAVL, inserir);
+        treebinary = insert_tree_binary(inserir, treebinary);
         break;
       case 3:
-        
+        cout << "DIGITE A PLACA DO VEÍCULO A EXCLUIR: ";
+        cin >> placa;
+        if(!remove_avl(treeAVL, placa) || !remove_binary(treebinary, placa) || !busca_e_remocao_de_veiculo(bd, placa)){
+          cout << "VALOR NÃO ENCONTRADO!" << endl;
+        }
+        break;
       case 4:
       do {
           cout << "------------------------------------------------------------"
@@ -104,9 +132,9 @@ int main() {
               cout << endl << "LISTA VAZIA" << endl;
             }
           } else if (opc2 == 1) {
-            exibirArvorePreOrdem(treebinary);
+            printBinaryTree(treebinary, 0);
           } else if (opc2 == 2) {
-            exibirArvorePreOrdem(treeAVL);
+            printAVLTree(treeAVL, 0);
           } else {
             cout << endl
                  << "VALOR INVÁLIDO, DIGITE APENAS '0', '1' OU '2'" << endl;
@@ -120,7 +148,7 @@ int main() {
     } while (opc != 0);
     // LIBERANDO MEMÓRIA USADA
     encerra_lista(bd);
-    destruirArvore(&treebinary);
+    destruirArvoreBinary(treebinary);
     destruirArvore(&treeAVL);
   } else {
     cout << "Unable to open file\n";
