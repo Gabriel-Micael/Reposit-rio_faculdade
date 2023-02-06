@@ -135,6 +135,8 @@ int main() {
             printBinaryTree(treebinary, 0);
           } else if (opc2 == 2) {
             printAVLTree(treeAVL, 0);
+            cout << endl << "AVL EM PRÉ-ORDEM: ";
+            exibirArvorePreOrdem(treeAVL);
           } else {
             cout << endl
                  << "VALOR INVÁLIDO, DIGITE APENAS '0', '1' OU '2'" << endl;
