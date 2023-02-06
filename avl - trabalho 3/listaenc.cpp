@@ -73,7 +73,7 @@ int busca_e_remocao_de_veiculo(cabeca *bd, string placa) {
   int opc;
   if (bd->prox == NULL) {
     cout << endl << "BANCO DE DADOS VAZIO!" << endl;
-    return -2;
+    return 0;
   }
   no *ant = NULL;
   no *pont;
@@ -81,13 +81,13 @@ int busca_e_remocao_de_veiculo(cabeca *bd, string placa) {
        ant = pont, pont = pont->prox) {
   }
   if (pont == NULL) {
-    return -1;
+    return 0;
   } else {
     do {
       cout << "ELEMENTO ENCONTRADO. DESEJA REMOVÊ-LO? ( 1 - SIM, 0 - NÃO) ";
       cin >> opc;
       if (opc == 0) {
-        return 0;
+        return 1;
       } else if (opc == 1) {
         if (ant == NULL) {
           bd->prox = pont->prox;
@@ -160,14 +160,4 @@ void encerra_lista(cabeca *bd) {
     delete (ant);
   }
   delete (bd);
-}
-
-//FUNÇÃO QUE CRIA A ÁRVORE BINÁRIA
-void make_tree_binary(PONT *treebinary, cabeca *bd){
-
-}
-
-//FUNÇÃO QUE CRIA A ÁRVORE AVL
-void make_tree_AVL(PONT *treeAVL, cabeca *bd){
-
 }
