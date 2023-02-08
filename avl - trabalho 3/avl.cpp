@@ -122,6 +122,11 @@ PONT remove_avl(PONT no, string placa){
     no = balancear(no);
 }
 
+/**
+ * Função para balancear um nó de uma árvore
+ * @param no endereço de uma estrutura NO
+ * @return o endereço de um no balanceado
+*/
 PONT balancear(PONT no){
     int fatorbalanciamento = fb(no);
     if(fatorbalanciamento < -1 && fb(no -> dir) <= 0){
@@ -134,7 +139,11 @@ PONT balancear(PONT no){
         no = rotacao_direita_esquerda(no);
     }return no;
 }
-
+/**
+ * Função para imprimir um árvore de modo organizado
+ * @param node endereço de uma estrutura NO
+ * @param level profundidade do nó
+*/
 void printAVLTree(PONT node, int level)
 {
     if (node != NULL)
@@ -148,17 +157,22 @@ void printAVLTree(PONT node, int level)
 }
 
 /* Exibe arvore Pre Ordem.         */
+/**
+ * @param raiz endereço de uma estrutura NO
+ * */
 void exibirArvorePreOrdem(PONT raiz){
     if (raiz == NULL){
         return;
     }
-    cout << "(" << raiz->veiculo->placa;
+    cout << raiz->veiculo->placa << " ";
     exibirArvorePreOrdem(raiz->esq);
     exibirArvorePreOrdem(raiz->dir);
-    cout << ")";
 }
 
 /* Exibe arvore Pos Ordem         */
+/**
+ * @param raiz endereço de uma estrutura NO
+*/
 void exibirArvorePosOrdem(PONT raiz){
     if (raiz == NULL)
         return;
@@ -166,7 +180,12 @@ void exibirArvorePosOrdem(PONT raiz){
     exibirArvorePreOrdem(raiz->dir);
     cout << raiz->veiculo->placa << " ";
 }
-
+/**
+ * Função para busca de um nó
+ * @param veiculo endereço de uma estrutura Tveículo
+ * @param raiz endereço de um estrutura NO
+ * @return NULL se não encontrar e o nó caso contrário
+*/
 PONT buscaBinaria(Tveiculo *veiculo, PONT raiz){
     if (raiz == NULL)
         return NULL;
@@ -178,6 +197,9 @@ PONT buscaBinaria(Tveiculo *veiculo, PONT raiz){
 }  
 
 /* funcao auxiliar na destruicao (liberacao da memoria) de uma arvore */
+/**
+ * @param subRaiz endereço de uma estrutura NO
+*/
 void destruirAux(PONT subRaiz){
     if (subRaiz){
 	destruirAux(subRaiz->esq);
@@ -187,6 +209,9 @@ void destruirAux(PONT subRaiz){
 }
 
 /* libera toda memoria de uma arvore e coloca NULL no valor da raiz    */
+/**
+ * @param raiz endereço de uma estrutura NO
+*/
 void destruirArvore(PONT * raiz){
     destruirAux(*raiz);
     *raiz = NULL;
