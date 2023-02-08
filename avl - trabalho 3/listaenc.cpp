@@ -29,6 +29,10 @@ void read_file(Tveiculo *veiculo, string nome_do_arquivo){
 }
 
 // FUNÇÃO PARA IMPRIMIR O VETOR DE STRUCT NA TELA
+/**
+ * @param bd endereço de uma estrutura do tipo cabeca
+ * @return 1 se a lista encadeada não estiver vazia e 0 caso cotrário
+*/
 int mostrar(cabeca *bd) {
   if (bd->prox != NULL) {
     for (no *pont = bd->prox; pont != NULL; pont = pont->prox) {
@@ -53,6 +57,10 @@ int mostrar(cabeca *bd) {
 }
 
 // FUNÇÃO QUE VAI TENTAR INSERIR UM NOVO VEÍCULO AO BANCO DE DADOS
+/**
+ * @param bd endereço de uma estrutura cabeca
+ * @param veiculo endereço de um estrutura veiculo
+*/
 void insercao_veiculo(cabeca *bd, Tveiculo *veiculo) {
   no *novo = new no;
   novo->veiculo = veiculo;
@@ -67,8 +75,14 @@ void insercao_veiculo(cabeca *bd, Tveiculo *veiculo) {
     bd->tam = bd->tam + 1;
   }
 }
-// FUNÇÃO QUE VAI TENTAR BUSCAR UM ELEMENTO E, SE ACHAR, PERGUNTAR SE DEVE
-// REMOVER
+// FUNÇÃO QUE VAI TENTAR BUSCAR UM ELEMENTO E, SE ACHAR, PERGUNTAR SE DEVE REMOVER
+/**
+ * @param bd recebe uma estrutura cabeca
+ * @param placa recebe uma string com a identificação da placa do veículo
+ * @return 0 caso a lista encadeada esteja vazia ou o elemento não tenha sido encontrado
+ * @return 1 caso tenha sido encontrado e excluído
+ * @return 2 caso tenha sido encontrado, mas não foi excluído
+*/
 int busca_e_remocao_de_veiculo(cabeca *bd, string placa) {
   int opc;
   if (bd->prox == NULL) {
@@ -87,7 +101,7 @@ int busca_e_remocao_de_veiculo(cabeca *bd, string placa) {
       cout << "ELEMENTO ENCONTRADO. DESEJA REMOVÊ-LO? ( 1 - SIM, 0 - NÃO) ";
       cin >> opc;
       if (opc == 0) {
-        return 1;
+        return 2;
       } else if (opc == 1) {
         if (ant == NULL) {
           bd->prox = pont->prox;
