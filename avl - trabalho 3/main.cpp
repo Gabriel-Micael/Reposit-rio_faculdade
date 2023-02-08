@@ -1,10 +1,23 @@
 /*
- * Autores: Gabriel Micael Henrique (2022.1.08.035)
- *          Rodrigo Cabral          (2022.1.08.037)
- *          Henry Lopes             (2022.1.08.038)
+ *      BANCO DE DADOS (VEÍCULOS) USANDO LISTA ENCADEADA, ÁRVORES AVLS E BINÁRIAS.
+ *                                      AEDs II
  *
+ *
+ *
+ * Autores: Gabriel Micael Henrique (2022.1.08.035)
+ *          Rodrigo Cabral Diniz    (2022.1.08.037)
+ *
+ *  Esse programa é feito em c++ e tem como objetivo gerenciar um banco
+ * de dados relacionados a veículos usando lista encadeada, árvores 
+ * binárias e árvores avl. Oferece os recursos de busca variadas, exclusão 
+ * e inclusão de veículos, além de relatórios variados e a possibilidade de salvamento
+ * das alterações feitas.
+ * 
  */
 
+/**
+ * Bibliotecas utilizadas no programa
+*/
 #include <fstream>
 #include <iostream>
 #include "avl.h"
@@ -13,6 +26,7 @@
 
 using namespace std;
 
+//Função principal
 int main() {
   cabeca *bd = inicia_lista();
   PONT treebinary = NULL;
@@ -119,7 +133,7 @@ int main() {
           cout << "------------------------------------------------------------"
                   "--"
                << endl
-               << "[0] - LISTA PRINCIAPAL" << endl
+               << "[0] - LISTA PRINCIPAL" << endl
                << "[1] - ÁRVORE BINÁRIA" << endl
                << "[2] - ÁRVORE AVL" << endl
                << "------------------------------------------------------------"
