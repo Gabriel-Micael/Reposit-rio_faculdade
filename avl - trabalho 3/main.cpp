@@ -73,12 +73,17 @@ int main() {
       case 3:
         cout << "DIGITE A PLACA DO VEÍCULO A EXCLUIR: ";
         cin >> placa;
-        if(busca_e_remocao_de_veiculo(bd, placa)){
+        verifica = busca_e_remocao_de_veiculo(bd, placa);
+        if( verifica == 2){
           remove_avl(treeAVL, placa);
           remove_binary(treebinary, placa);
-        }else{
+          cout << endl << "REMOVIDO!!" << endl;
+        }else if( verifica == 0){
           cout << "VALOR NÃO ENCONTRADO OU BANCO DE DADOS VAZIO!" << endl;
+        }else{
+          cout << "VALOR ENCONTRADO, MAS NÃO REMOVIDO!" << endl;
         }
+        break;
         break;
       case 4:
       do {
