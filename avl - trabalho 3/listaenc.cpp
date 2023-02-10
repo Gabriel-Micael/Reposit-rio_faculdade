@@ -1,38 +1,80 @@
 #include "listaenc.h"
 #include "avl.h"
+#include "binary.h"
 #include <fstream>
 
 //FUNÇÃO PARA FAZER A LEITURA DE UMA LINHA DO ARQUIVO
-void read_file(Tveiculo *veiculo, string nome_do_arquivo){
+Tveiculo * read_file(Tveiculo* veiculo, string nome_do_arquivo){
     ifstream myfile(nome_do_arquivo);
     if (myfile.is_open()) {
-      while (!myfile.eof()) {
-        veiculo = new Tveiculo;
-        myfile >> veiculo->modelo;
-        myfile >> veiculo->marca;
-        myfile >> veiculo->tipo;
-        myfile >> veiculo->ano;
-        myfile >> veiculo->km;
-        myfile >> veiculo->potencia;
-        myfile >> veiculo->combustivel;
-        myfile >> veiculo->cambio;
-        myfile >> veiculo->direcao;
-        myfile >> veiculo->cor;
-        myfile >> veiculo->porta;
-        myfile >> veiculo->placa;
-        myfile >> veiculo->valor;
-      }
+      veiculo = new Tveiculo;
+      myfile >> veiculo->modelo;
+      myfile >> veiculo->marca;
+      myfile >> veiculo->tipo;
+      myfile >> veiculo->ano;
+      myfile >> veiculo->km;
+      myfile >> veiculo->potencia;
+      myfile >> veiculo->combustivel;
+      myfile >> veiculo->cambio;
+      myfile >> veiculo->direcao;
+      myfile >> veiculo->cor;
+      myfile >> veiculo->porta;
+      myfile >> veiculo->placa;
+      myfile >> veiculo->valor;
       myfile.close();
-    } else {
-      cout << "Unable to open file\n";
+      return veiculo;
     }
+    cout << "Unable to open file\n";
+    return NULL;
 }
 
-// FUNÇÃO PARA IMPRIMIR O VETOR DE STRUCT NA TELA
+//FUNÇÃO PARA FAZER A LEITURA DO ARQUIVO E GUARDAR EM UMA LISTA ENCADEADA
 /**
- * @param bd endereço de uma estrutura do tipo cabeca
- * @return 1 se a lista encadeada não estiver vazia e 0 caso cotrário
+ * @param bd endereço de uma estrutura do tipo cabeça (cabeçalho da lista encadeada)
+ * @param nome_do_arquivo string com o nome do arquivo *txt a ser lido
+ * @param treeAVL endereço de uma estrutura do tipo NO (raiz da árvore avl)
+ * @param treebinary endereço de uma estrutura do tipo NO (raiz da árvore binária)
+ * @return endereço do cabeçalho da lista encadeada atualizada ou NULL caso não consiga
+ * abrir o aquivo *txt
 */
+no * read_file_listaenc(cabeca* bd, string nome_do_arquivo, PONT treeAVL, PONT treebinary){
+  ifstream myfile(nome_do_arquivo);
+  if (myfile.is_open()) {
+    bd->prox = new no;
+    bd->prox->veiculo = new Tveiculo;
+    no *percorre = bd->prox;
+    while (!myfile.eof()) {
+      myfile >> percorre->veiculo->modelo;
+      myfile >> percorre->veiculo->marca;
+      myfile >> percorre->veiculo->tipo;
+      myfile >> percorre->veiculo->ano;
+      myfile >> percorre->veiculo->km;
+      myfile >> percorre->veiculo->potencia;
+      myfile >> percorre->veiculo->combustivel;
+      myfile >> percorre->veiculo->cambio;
+      myfile >> percorre->veiculo->direcao;
+      myfile >> percorre->veiculo->cor;
+      myfile >> percorre->veiculo->porta;
+      myfile >> percorre->veiculo->placa;
+      myfile >> percorre->veiculo->valor; 
+      if (!myfile.eof()) {
+        percorre->prox = new no;
+        percorre = percorre->prox;
+        percorre -> prox = NULL;
+        percorre->veiculo = new Tveiculo;
+      }
+      bd->tam = bd->tam + 1;
+    }
+    myfile.close();
+    return bd -> prox;
+} else {
+    cout << "Unable to open file\n";
+    return NULL;
+}
+}
+
+
+// FUNÇÃO PARA IMPRIMIR O VETOR DE STRUCT NA TELA
 int mostrar(cabeca *bd) {
   if (bd->prox != NULL) {
     for (no *pont = bd->prox; pont != NULL; pont = pont->prox) {
@@ -57,10 +99,6 @@ int mostrar(cabeca *bd) {
 }
 
 // FUNÇÃO QUE VAI TENTAR INSERIR UM NOVO VEÍCULO AO BANCO DE DADOS
-/**
- * @param bd endereço de uma estrutura cabeca
- * @param veiculo endereço de um estrutura veiculo
-*/
 void insercao_veiculo(cabeca *bd, Tveiculo *veiculo) {
   no *novo = new no;
   novo->veiculo = veiculo;
@@ -75,18 +113,11 @@ void insercao_veiculo(cabeca *bd, Tveiculo *veiculo) {
     bd->tam = bd->tam + 1;
   }
 }
-// FUNÇÃO QUE VAI TENTAR BUSCAR UM ELEMENTO E, SE ACHAR, PERGUNTAR SE DEVE REMOVER
-/**
- * @param bd recebe uma estrutura cabeca
- * @param placa recebe uma string com a identificação da placa do veículo
- * @return 0 caso a lista encadeada esteja vazia ou o elemento não tenha sido encontrado
- * @return 1 caso tenha sido encontrado e excluído
- * @return 2 caso tenha sido encontrado, mas não foi excluído
-*/
+// FUNÇÃO QUE VAI TENTAR BUSCAR UM ELEMENTO E, SE ACHAR, PERGUNTAR SE DEVE
+// REMOVER
 int busca_e_remocao_de_veiculo(cabeca *bd, string placa) {
   int opc;
   if (bd->prox == NULL) {
-    cout << endl << "BANCO DE DADOS VAZIO!" << endl;
     return 0;
   }
   no *ant = NULL;
@@ -101,7 +132,7 @@ int busca_e_remocao_de_veiculo(cabeca *bd, string placa) {
       cout << "ELEMENTO ENCONTRADO. DESEJA REMOVÊ-LO? ( 1 - SIM, 0 - NÃO) ";
       cin >> opc;
       if (opc == 0) {
-        return 2;
+        return 1;
       } else if (opc == 1) {
         if (ant == NULL) {
           bd->prox = pont->prox;
