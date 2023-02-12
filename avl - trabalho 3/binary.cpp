@@ -1,5 +1,10 @@
 #include "binary.h"
 
+/**
+ * @param no endereço de uma estrutura NO
+ * @param veiculo endereço de um estrutura Tveiculo
+ * @return no raiz balanceado após a inserção
+*/
 PONT insert_tree_binary(PONT no, Tveiculo * veiculo){
     if(!no){
         return criarNovoNo(veiculo);
@@ -17,6 +22,13 @@ PONT insert_tree_binary(PONT no, Tveiculo * veiculo){
     return no;
 }
 
+/**
+ * @param no endereço de uma estrutura NO
+ * @param placa cadeia de caracteres com a identificação da placa do
+ * veículo que será removido
+ * @return NULL caso estrutura esteja "vazia"
+ * @return no raiz balanceado após a remoção
+*/
 PONT remove_binary(PONT no, string placa){
     if(!no){
         return NULL;
