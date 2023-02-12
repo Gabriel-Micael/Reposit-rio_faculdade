@@ -19,5 +19,6 @@ int busca_e_remocao_de_veiculo(cabeca *bd, string placa);
 void insercao_veiculo(cabeca *bd, Tveiculo *veiculo);
 int mostrar(cabeca *bd);
 Tveiculo * read_file(Tveiculo* veiculo, string nome_do_arquivo);
-no * read_file_listaenc(cabeca* bd, string nome_do_arquivo, PONT treeAVL, PONT treebinary);
+int verifica_entrada();
+no * read_file_listaenc(cabeca* bd, string nome_do_arquivo);
 #endif
