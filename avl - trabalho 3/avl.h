@@ -31,7 +31,7 @@ typedef struct aux {
 int fb(PONT no);
 void destruirArvore(PONT * raiz);
 void destruirAux(PONT subRaiz);
-PONT buscaBinaria(Tveiculo veiculo, PONT raiz);
+PONT buscaBinaria_placa(string placa, PONT raiz);
 void exibirArvorePosOrdem(PONT raiz);
 void exibirArvorePreOrdem(PONT raiz);
 void printAVLTree(PONT node, int level);
@@ -45,5 +45,13 @@ PONT rotacao_esquerda_direita(PONT no);
 PONT balancear(PONT no);
 PONT insere_avl(PONT no, Tveiculo *veiculo);
 PONT remove_avl(PONT no, string placa);
-
+void imprimir_veiculo(Tveiculo* veiculo);
+void valores_acima(PONT raiz, int valor);
+void valores_abaixo(PONT raiz, int valor);
+void direcao_eletrica(PONT raiz);
+void direcao_hidraulica(PONT raiz);
+void cambio_automatico(PONT raiz);
+void cambio_manual(PONT raiz);
+void cor(PONT raiz, string entrada_cor);
+void modelo(PONT raiz, string modelo_entrada);
 #endif //AVL_H
