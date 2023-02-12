@@ -1,5 +1,10 @@
 #include "avl.h"
 
+/**
+ * @param veiculo endereço de uma estrutura Tveiculo
+ * @return endereço do novo no criado e inserido com os
+ * dados do veículo informado
+*/
 PONT criarNovoNo(Tveiculo *veiculo){
     PONT novoNo = (PONT)new NO;
     novoNo->esq = NULL;
@@ -9,17 +14,29 @@ PONT criarNovoNo(Tveiculo *veiculo){
     return novoNo;
 }
 
+/**
+ * @param a valor inteiro
+ * @param b valor inteiro
+ * @return maior dos valores a e b
+*/
 int max(int a, int b){
     return (a > b)? a: b;
 }
 
+/**
+ * @param p endereço de uma estrutura NO
+ * @return altura da estrutura p informada
+*/
 int altura(PONT p){
     if (!p){
         return -1;
     }
     return 1 + max(altura(p->esq),altura(p->dir));
 }
-
+/**
+ * @param no endereço de uma estrutura NO
+ * @return fator de balanciamento da estrutura no informada
+*/
 int fb(PONT no){
     if(no){
         return (altura(no->esq) - altura(no->dir));
@@ -27,6 +44,10 @@ int fb(PONT no){
     return 0;
 }
 
+/**
+ * @param no endereço de uma estrutura NO
+ * @return no reajustado com rotação simpres a esquerda
+*/
 PONT rotacao_simples_a_esquerda(PONT no){
     PONT y, f;
     y = no -> dir;
@@ -38,6 +59,10 @@ PONT rotacao_simples_a_esquerda(PONT no){
     return y;
 }
 
+/**
+ * @param no endereço de uma estrutura NO
+ * @return no reajustado com rotação simpres a direita
+*/
 PONT rotacao_simples_a_direita(PONT no){
     PONT y, f;
     y = no -> esq;
@@ -49,16 +74,29 @@ PONT rotacao_simples_a_direita(PONT no){
     return y;
 }
 
+/**
+ * @param no endereço de uma estrutura NO
+ * @return no reajustado com rotação dupla (direita-esquerda)
+*/
 PONT rotacao_direita_esquerda(PONT no){
     no -> dir = rotacao_simples_a_direita(no->dir);
     return rotacao_simples_a_esquerda(no);
 }
 
+/**
+ * @param no endereço de uma estrutura NO
+ * @return no reajustado com rotação dupla (esquerda-direita)
+*/
 PONT rotacao_esquerda_direita(PONT no){
     no -> esq = rotacao_simples_a_esquerda(no->esq);
     return rotacao_simples_a_direita(no);
 }
 
+/**
+ * @param no endereço de uma estrutura NO
+ * @param veiculo endereço de uma estrutura Tveiculo
+ * @return no raiz balanceado com o veiculo inserido
+*/
 PONT insere_avl(PONT no, Tveiculo *veiculo){
     if(!no){
         return criarNovoNo(veiculo);
@@ -77,6 +115,12 @@ PONT insere_avl(PONT no, Tveiculo *veiculo){
     return no;
 }
 
+/**
+ * @param no endereço de uma estrutura NO
+ * @param placa cadeia de caracteres com a placa do veículo a remover
+ * @return NULL caso não encontre
+ * @return no raiz balanceado com a remoção realizado caso tenha encontre
+*/
 PONT remove_avl(PONT no, string placa){
     if(!no){
         return NULL;
@@ -120,6 +164,7 @@ PONT remove_avl(PONT no, string placa){
     }
     no -> bal = max(altura(no -> esq), altura(no -> dir)) + 1;
     no = balancear(no);
+    return no;
 }
 
 /**
@@ -186,14 +231,14 @@ void exibirArvorePosOrdem(PONT raiz){
  * @param raiz endereço de um estrutura NO
  * @return NULL se não encontrar e o nó caso contrário
 */
-PONT buscaBinaria(Tveiculo *veiculo, PONT raiz){
+PONT buscaBinaria_placa(string placa, PONT raiz){
     if (raiz == NULL)
         return NULL;
-    if (raiz->veiculo->placa == veiculo->placa)
+    if (raiz->veiculo->placa == placa)
         return raiz;
-    if (raiz->veiculo->placa < veiculo->placa) 
-        return buscaBinaria(veiculo,raiz->dir);
-    return buscaBinaria(veiculo,raiz->esq); 
+    if (raiz->veiculo->placa < placa) 
+        return buscaBinaria_placa(placa,raiz->dir);
+    return buscaBinaria_placa(placa,raiz->esq); 
 }  
 
 /* funcao auxiliar na destruicao (liberacao da memoria) de uma arvore */
@@ -215,4 +260,116 @@ void destruirAux(PONT subRaiz){
 void destruirArvore(PONT * raiz){
     destruirAux(*raiz);
     *raiz = NULL;
+}
+/**
+ * @param veiculo endereço de uma estrutura Tveiculo
+*/
+void imprimir_veiculo(Tveiculo* veiculo){
+    if(veiculo){
+        cout << veiculo->modelo << " ";
+        cout << veiculo->marca << " ";
+        cout << veiculo->tipo << " ";
+        cout << veiculo->ano << " ";
+        cout << veiculo->km << " ";
+        cout << veiculo->potencia << " ";
+        cout << veiculo->combustivel << " ";
+        cout << veiculo->cambio << " ";
+        cout << veiculo->direcao << " ";
+        cout << veiculo->cor << " ";
+        cout << veiculo->porta << " ";
+        cout << veiculo->placa << " ";
+        cout << veiculo->valor << endl;
+    }
+}
+
+/**
+ * @param raiz endereço de uma estrutura NO
+ * @param valor valor inteiro (preço)
+*/
+void valores_acima(PONT raiz, int valor){
+    if(raiz){
+        if(raiz -> esq)valores_acima(raiz -> esq, valor);
+        if(raiz -> veiculo -> valor >= valor)imprimir_veiculo(raiz->veiculo);
+        if(raiz -> dir)valores_acima(raiz -> dir, valor);
+    }
+}
+
+/**
+ * @param raiz endereço de uma estrutura NO
+ * @param valor valor inteiro (preço)
+*/
+void valores_abaixo(PONT raiz, int valor){
+    if(raiz){
+        if(raiz -> esq)valores_abaixo(raiz -> esq, valor);
+        if(raiz -> veiculo -> valor <= valor)imprimir_veiculo(raiz->veiculo);
+        if(raiz -> dir)valores_abaixo(raiz -> dir, valor);
+    }
+}
+
+/**
+ * @param raiz endereço de uma estrutura NO
+*/
+void direcao_hidraulica(PONT raiz){
+    if(raiz){
+        if(raiz->esq)direcao_hidraulica(raiz->esq);
+        if(raiz -> veiculo -> direcao == "Hidráulica")imprimir_veiculo(raiz -> veiculo);
+        if(raiz->dir)direcao_hidraulica(raiz->dir);
+    }
+}
+
+/**
+ * @param raiz endereço de uma estrutura NO
+*/
+void direcao_eletrica(PONT raiz){
+    if(raiz){
+        if(raiz->esq)direcao_eletrica(raiz->esq);
+        if(raiz -> veiculo -> direcao == "Elétrica")imprimir_veiculo(raiz -> veiculo);
+        if(raiz->dir)direcao_eletrica(raiz->dir);
+    }
+}
+
+/**
+ * @param raiz endereço de uma estrutura NO
+*/
+void cambio_automatico(PONT raiz){
+    if(raiz){
+        if(raiz->esq)cambio_automatico(raiz->esq);
+        if(raiz -> veiculo -> cambio == "Automático")imprimir_veiculo(raiz -> veiculo);
+        if(raiz->dir)cambio_automatico(raiz->dir);
+    }
+}
+
+/**
+ * @param raiz endereço de uma estrutura NO
+*/
+void cambio_manual(PONT raiz){
+    if(raiz){
+        if(raiz->esq)cambio_manual(raiz->esq);
+        if(raiz -> veiculo -> cambio == "Manual")imprimir_veiculo(raiz -> veiculo);
+        if(raiz->dir)cambio_manual(raiz->dir);
+    }
+}
+
+/**
+ * @param raiz endereço de uma estrutura NO
+ * @param entrada_cor cadeia de caracteres com a cor a buscar
+*/
+void cor(PONT raiz, string entrada_cor){
+    if(raiz){
+        if(raiz->esq)cor(raiz->esq, entrada_cor);
+        if(raiz -> veiculo -> cor == entrada_cor)imprimir_veiculo(raiz -> veiculo);
+        if(raiz->dir)cor(raiz->dir, entrada_cor);
+    }
+}
+
+/**
+ * @param raiz endereço de uma estrutura NO
+ * @param modelo_entrada cadeia de caracteres com o modelo a buscar
+*/
+void modelo(PONT raiz, string modelo_entrada){
+    if(raiz){
+        if(raiz->esq)modelo(raiz->esq, modelo_entrada);
+        if(raiz -> veiculo -> modelo == modelo_entrada)imprimir_veiculo(raiz -> veiculo);
+        if(raiz->dir)modelo(raiz->dir, modelo_entrada);
+    }
 }
