@@ -9,7 +9,7 @@
  *
  *  Esse programa é feito em c++ e tem como objetivo gerenciar um banco
  * de dados relacionados a veículos usando lista encadeada, árvores 
- * binárias e árvores avl. Oferece os recursos de busca variadas, exclusão 
+ * binárias e árvores avl. Oferece os recursos de buscas variadas, exclusão 
  * e inclusão de veículos, além de relatórios variados e a possibilidade de salvamento
  * das alterações feitas.
  * 
