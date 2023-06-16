@@ -12,6 +12,9 @@ public class Hostel {
     private ArrayList<Room> rooms;
     private ArrayList<Employee> employees;
 
+    public Hostel() {
+        this.rooms = new ArrayList<>();
+    }
     public String getName() {
         return name;
     }
@@ -82,5 +85,9 @@ public class Hostel {
 
     public void setEmployees(ArrayList<Employee> employees) {
         this.employees = employees;
+    }
+
+    public void addRoom(Room room) {
+        rooms.add(room);
     }
 }

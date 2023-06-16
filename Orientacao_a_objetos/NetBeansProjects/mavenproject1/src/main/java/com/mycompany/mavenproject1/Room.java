@@ -4,11 +4,14 @@ public class Room {
     private int number;
     private String name;
     private String type;
-    private String floor;
+    private int floor;
     private String description;
     private String dailyRate;
-    private int dimension;
-
+    private double dimension;
+    public Room(int number, String type) {
+        this.number = number;
+        this.type = type;
+    }
     public int getNumber() {
         return number;
     }
@@ -33,11 +36,11 @@ public class Room {
         this.type = type;
     }
 
-    public String getFloor() {
+    public int getFloor() {
         return floor;
     }
 
-    public void setFloor(String floor) {
+    public void setFloor(int floor) {
         this.floor = floor;
     }
 
@@ -57,11 +60,11 @@ public class Room {
         this.dailyRate = dailyRate;
     }
 
-    public int getDimension() {
+    public double getDimension() {
         return dimension;
     }
 
-    public void setDimension(int dimension) {
+    public void setDimension(double dimension) {
         this.dimension = dimension;
     }
 }
